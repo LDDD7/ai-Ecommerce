@@ -1,0 +1,25 @@
+card_id: PB-R1-02
+title: 组合装加赠，绕开单品比价
+root_causes: [R1]
+metrics: [cvr, gmv, aov, paid_orders, gross_margin]
+risk: 1
+scope: [sku, style]
+action_type: issue_coupon
+preconditions:
+  - 单品被竞品按同规格正面比价，直接跟价会击穿 15% 毛利底线
+  - 该 SKU 有可搭配的第二件商品（同款不同色或互补品），两件库存均可售 15 天以上
+  - 近 30 天客单价低于类目均值 10% 以上
+steps:
+  - 新建「两件装」组合链接，到手价定为单品价 ×2 ×0.88，折算件单价比竞品低 3%~5%
+  - 组合链接首图改双件平铺加角标「两件到手省 32 元」，详情页第二屏放单品与组合的单价对比表
+  - 对加购未支付人群发「组合装专享 20 元券」，门槛设为组合链接价，有效期 48 小时，限量 300 张
+  - 赠品选成本 3 元以内、感知价值 15 元以上的小样，随组合装发出，主图右下角标注「下单送 X」
+  - 原单品链接保持原价不动，只在详情页底部加「买两件更划算」跳转入口，避免自己打自己
+expected_effect:
+  metric: aov
+  direction: up
+  range: [0.18, 0.35]
+  window_days: 14
+success_metric: gmv
+source: 行业实践（组合装与满赠保价）
+version: 1

@@ -1,0 +1,25 @@
+card_id: PB-R2-01
+title: 首图换场景图，文字压到三成
+root_causes: [R2]
+metrics: [ctr, clicks, impressions, uv]
+risk: 1
+scope: [sku, style]
+action_type: swap_creative
+preconditions:
+  - 首图上线超过 21 天未更换，CTR 环比下滑超过 25% 且持续 5 天以上
+  - 同层竞品首图点击率高于我方 30% 以上
+  - 当前首图为纯白底加大面积文字，文字占比超过 40%
+steps:
+  - 新首图改用真实场景图（模特半身加使用场景），主体占画面 60%~70%，四周留白不低于 15%
+  - 文字压到画面 30% 以内，只留一个核心卖点，字号不小于画面高度的 1/12，手机缩略图下仍可读
+  - 主图顺序调为场景首图、卖点图、细节图、参数图、白底图，白底图退到第 5 张
+  - 新旧首图 5:5 分流跑 48 小时，每张至少 3000 曝光，CTR 领先 15% 以上才全量替换
+  - 全量后第 3、7 天各复盘一次，7 天内 CTR 回落超过 10% 就回到测图池换下一张
+expected_effect:
+  metric: ctr
+  direction: up
+  range: [0.15, 0.32]
+  window_days: 7
+success_metric: clicks
+source: 平台素材规范（主图白底与文字占比）+ 行业实践
+version: 1

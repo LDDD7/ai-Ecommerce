@@ -1,0 +1,848 @@
+/* ==========================================================================
+   素材改进面板（CreativePanel）—— 只新增 .cr-* 一族类，不改全局 styles.css。
+   视觉沿用全站：浅灰底 + 白面板 + 极浅阴影 + 20px 圆角；
+   颜色/圆角/阴影/缓动一律写 fallback，避免依赖全局变量的定义顺序。
+   ========================================================================== */
+
+/* -------------------------------- 遮罩与面板 ------------------------------- */
+
+.cr-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 4vh 16px;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.32);
+}
+
+/* 模糊只在支持的浏览器里开，避免不支持时出现半透明糊字 */
+@supports (backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px)) {
+  .cr-overlay {
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+}
+
+/* 面板打开时锁住背景滚动（:has 不支持时自然退化） */
+@supports selector(:has(*)) {
+  body:has(.cr-overlay) {
+    overflow: hidden;
+  }
+}
+
+.cr-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(880px, 96vw);
+  max-height: 86vh;
+  overflow: hidden;
+  border-radius: var(--r-lg, 20px);
+  background: var(--surface, #ffffff);
+  box-shadow: var(--shadow-2, 0 2px 6px rgba(0, 0, 0, 0.05), 0 18px 44px rgba(0, 0, 0, 0.18));
+  animation: cr-pop var(--t, 240ms) var(--ease, cubic-bezier(0.32, 0.72, 0, 1)) both;
+}
+
+.cr-panel:focus {
+  outline: none;
+}
+
+@keyframes cr-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---------------------------------- 头部 ---------------------------------- */
+
+.cr-head {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--line, rgba(0, 0, 0, 0.08));
+}
+
+.cr-head__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cr-title {
+  margin: 0;
+  color: var(--ink, #1d1d1f);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.cr-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 6px 0 0;
+  color: var(--ink-2, #6e6e73);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.cr-sub .cr-meta {
+  margin: 0;
+}
+
+.cr-sku {
+  color: var(--ink-2, #6e6e73);
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 12px;
+  letter-spacing: -0.01em;
+}
+
+/* 小标签：provider / 已降级 / 合规结论 / 需人工 */
+.cr-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--ink-2, #6e6e73);
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+
+.cr-chip--muted {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--ink-3, #86868b);
+}
+
+.cr-chip--warn {
+  background: rgba(154, 91, 0, 0.12);
+  color: var(--amber, #9a5b00);
+}
+
+.cr-chip--ok {
+  background: rgba(15, 123, 63, 0.1);
+  color: var(--green, #0f7b3f);
+}
+
+.cr-chip--fail {
+  background: rgba(215, 0, 21, 0.09);
+  color: var(--red, #d70015);
+}
+
+/* Ghost 关闭键：胶囊文字按钮 */
+.cr-close {
+  flex: 0 0 auto;
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid var(--line, rgba(0, 0, 0, 0.08));
+  border-radius: 999px;
+  background: var(--surface-2, #fbfbfd);
+  color: var(--ink-2, #6e6e73);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms var(--ease, cubic-bezier(0.32, 0.72, 0, 1)),
+    color 160ms var(--ease, cubic-bezier(0.32, 0.72, 0, 1)),
+    transform 160ms var(--ease, cubic-bezier(0.32, 0.72, 0, 1));
+}
+
+.cr-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink, #1d1d1f);
+}
+
+.cr-close:active {
+  transform: scale(0.96);
+}
+
+/* ---------------------------------- 正文 ---------------------------------- */
+
+.cr-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 18px 24px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.cr-meta {
+  margin: 8px 0 0;
+  color: var(--ink-2, #6e6e73);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.cr-meta + .cr-meta {
+  margin-top: 2px;
+}
+
+.cr-note {
+  margin: 10px 0 0;
+  color: var(--ink-3, #86868b);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.cr-note--bad {
+  color: var(--red, #d70015);
+}
+
+/* 仅供读屏：视觉隐藏但可被 role=status 朗读 */
+.cr-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* -------------------------------- 左右对比 -------------------------------- */
+
+.cr-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.cr-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid var(--line, rgba(0, 0, 0, 0.08));
+  border-radius: var(--r-md, 14px);
+  background: var(--surface-2, #fbfbfd);
+}
+
+.cr-side__title {
+  margin: 0;
+  color: var(--ink-2, #6e6e73);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* 图与占位灰块共用同一个盒子，加载成功/失败都不会跳版 */
+.cr-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  background: #f0f0f2;
+  object-fit: contain;
+}
+
+.cr-img--empty {
+  display: grid;
+  place-items: center;
+  border: 1px dashed rgba(0, 0, 0, 0.12);
+  color: var(--ink-3, #86868b);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+/* -------------------------------- 修复清单 -------------------------------- */
+
+.cr-fixes,
+.cr-copy,
+.cr-compliance {
+  margin: 18px 0 0;
+}
+
+.cr-fixes > h3,
+.cr-copy > h3,
+.cr-compliance > h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  color: var(--ink, #1d1d1f);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.cr-fixes__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cr-fix {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  padding: 8px 10px;
+  border-left: 2px solid rgba(15, 123, 63, 0.35);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.02);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.cr-fix--manual {
+  border-left-color: rgba(0, 0, 0, 0.18);
+  background: rgba(0, 0, 0, 0.045);
+}
+
+/* 自动已处理的项：绿色左边线，与「需人工」的灰底区分 */
+.cr-fix--done {
+  border-left-color: rgba(15, 123, 63, 0.45);
+}
+
+.cr-fix__issue {
+  flex: 0 0 auto;
+  color: var(--ink, #1d1d1f);
+  font-weight: 600;
+}
+
+.cr-fix__arrow {
+  flex: 0 0 auto;
+  color: var(--ink-3, #86868b);
+}
+
+.cr-fix__detail {
+  flex: 1 1 200px;
+  min-width: 0;
+  color: var(--ink-2, #6e6e73);
+  overflow-wrap: anywhere;
+}
+
+.cr-fix__tag {
+  flex: 0 0 auto;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--ink-3, #86868b);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+
+/* --------------------------------- 文案块 --------------------------------- */
+
+.cr-copy__title {
+  margin: 0 0 8px;
+  color: var(--ink, #1d1d1f);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.cr-copy__points {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.cr-copy__points > li {
+  position: relative;
+  padding-left: 14px;
+  color: var(--ink-2, #6e6e73);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.cr-copy__points > li::before {
+  content: "";
+  position: absolute;
+  top: 0.62em;
+  left: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--blue, #0071e3);
+}
+
+.cr-copy__desc {
+  margin: 0 0 6px;
+  color: var(--ink-2, #6e6e73);
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.cr-copy__size {
+  margin: 0;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--ink-2, #6e6e73);
+  font-size: 12.5px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* --------------------------------- 合规块 --------------------------------- */
+
+.cr-compliance__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cr-compliance__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.02);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.cr-compliance__item--pass {
+  background: rgba(15, 123, 63, 0.06);
+}
+
+.cr-compliance__item--warn {
+  background: rgba(154, 91, 0, 0.08);
+}
+
+.cr-compliance__item--fail {
+  background: rgba(215, 0, 21, 0.07);
+}
+
+.cr-compliance__dot {
+  flex: 0 0 auto;
+  align-self: center;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-3, #86868b);
+}
+
+.cr-compliance__item--pass .cr-compliance__dot {
+  background: var(--green, #0f7b3f);
+}
+
+.cr-compliance__item--warn .cr-compliance__dot {
+  background: var(--amber, #9a5b00);
+}
+
+.cr-compliance__item--fail .cr-compliance__dot {
+  background: var(--red, #d70015);
+}
+
+.cr-compliance__code {
+  flex: 0 0 auto;
+  color: var(--ink-3, #86868b);
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 11.5px;
+}
+
+.cr-compliance__status {
+  flex: 0 0 auto;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.cr-compliance__item--pass .cr-compliance__status {
+  color: var(--green, #0f7b3f);
+}
+
+.cr-compliance__item--warn .cr-compliance__status {
+  color: var(--amber, #9a5b00);
+}
+
+.cr-compliance__item--fail .cr-compliance__status {
+  color: var(--red, #d70015);
+}
+
+.cr-compliance__detail {
+  flex: 1 1 220px;
+  min-width: 0;
+  color: var(--ink-2, #6e6e73);
+  overflow-wrap: anywhere;
+}
+
+.cr-compliance__blockers {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(215, 0, 21, 0.07);
+  color: var(--red, #d70015);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.cr-compliance__blockers-head {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.cr-compliance__blockers ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--ink, #1d1d1f);
+}
+
+.cr-compliance__blockers li + li {
+  margin-top: 2px;
+}
+
+.cr-compliance__blockers .cr-note {
+  margin: 0;
+  color: var(--ink, #1d1d1f);
+}
+
+/* --------------------------------- 底部条 --------------------------------- */
+
+.cr-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--line, rgba(0, 0, 0, 0.08));
+  background: var(--surface-2, #fbfbfd);
+}
+
+.cr-actions__info {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.cr-actions__info .cr-note {
+  margin: 0;
+}
+
+.cr-actions__btns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.cr-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  min-height: 34px;
+  padding: 0 16px;
+  border: 1px solid var(--line-strong, rgba(0, 0, 0, 0.14));
+  border-radius: 999px;
+  background: var(--surface, #ffffff);
+  color: var(--ink, #1d1d1f);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms var(--ease, cubic-bezier(0.32, 0.72, 0, 1)),
+    opacity 160ms var(--ease, cubic-bezier(0.32, 0.72, 0, 1)),
+    transform 160ms var(--ease, cubic-bezier(0.32, 0.72, 0, 1));
+}
+
+.cr-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.cr-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.cr-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.cr-btn--primary {
+  border-color: transparent;
+  background: var(--blue, #0071e3);
+  color: #ffffff;
+}
+
+.cr-btn--primary:hover:not(:disabled) {
+  background: var(--blue-ink, #0066cc);
+}
+
+.cr-btn--primary:disabled {
+  /* 只在禁用态保留「已进入审批队列：act_xxx」这种长文案，允许折行 */
+  background: #c9c9cf;
+  color: #ffffff;
+  opacity: 1;
+  white-space: normal;
+  line-height: 1.35;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  text-align: center;
+}
+
+.cr-btn--ghost {
+  background: transparent;
+}
+
+.cr-btn--ghost:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* --------------------------------- 骨架屏 --------------------------------- */
+
+.cr-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cr-skeleton__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.cr-skeleton__block {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--r-md, 14px);
+  background: #ececef;
+  animation: cr-shimmer 1.6s ease-in-out infinite;
+}
+
+.cr-skeleton__line {
+  height: 12px;
+  border-radius: 6px;
+  background: #ececef;
+  animation: cr-shimmer 1.6s ease-in-out infinite;
+}
+
+.cr-skeleton__line--short {
+  width: 55%;
+}
+
+@keyframes cr-shimmer {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------- 错误态 --------------------------------- */
+
+.cr-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 16px;
+  border-radius: var(--r-md, 14px);
+  background: rgba(215, 0, 21, 0.06);
+}
+
+.cr-error__msg {
+  margin: 0;
+  color: var(--red, #d70015);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* ---------------------------------- 焦点 ---------------------------------- */
+
+.cr-btn:focus-visible,
+.cr-close:focus-visible {
+  outline: 2px solid var(--blue, #0071e3);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+/* ---------------------------------- 响应式 --------------------------------- */
+
+@media (max-width: 700px) {
+  .cr-overlay {
+    padding: 3vh 10px;
+  }
+
+  .cr-panel {
+    width: 100%;
+  }
+
+  .cr-head {
+    padding: 16px 16px 12px;
+  }
+
+  .cr-body {
+    padding: 14px 16px 12px;
+  }
+
+  .cr-actions {
+    padding: 12px 16px;
+  }
+
+  /* 左右对比改上下堆叠 */
+  .cr-compare,
+  .cr-skeleton__row {
+    grid-template-columns: 1fr;
+  }
+
+  .cr-actions__info,
+  .cr-actions__btns {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  .cr-actions__btns .cr-btn {
+    flex: 1 1 auto;
+  }
+}
+
+/* ------------------------------- 减弱动效 -------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-panel {
+    animation: none;
+  }
+
+  .cr-skeleton__block,
+  .cr-skeleton__line {
+    animation: none;
+    opacity: 1;
+  }
+
+  .cr-btn,
+  .cr-close {
+    transition: none;
+  }
+
+  .cr-btn:active:not(:disabled),
+  .cr-close:active {
+    transform: none;
+  }
+}
+
+/* ------------------------------ 改图方式切换 ------------------------------ */
+
+.cr-engine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+
+.cr-engine__label {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+
+.cr-engine__opt {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 7px 12px;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--t) var(--ease),
+    box-shadow var(--t) var(--ease),
+    color var(--t) var(--ease);
+}
+
+.cr-engine__opt em {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.cr-engine__opt:hover:not(:disabled) {
+  border-color: var(--line-strong);
+}
+
+.cr-engine__opt:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.cr-engine__opt--on {
+  border-color: var(--blue);
+  box-shadow: inset 0 0 0 1px var(--blue);
+  color: var(--blue-ink);
+}
+
+.cr-engine__opt--on em {
+  color: var(--blue);
+}
+
+.cr-engine__opt:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.cr-engine__hint {
+  flex: 1 1 220px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+@media (max-width: 560px) {
+  .cr-engine__hint {
+    flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-engine__opt {
+    transition: none;
+  }
+}

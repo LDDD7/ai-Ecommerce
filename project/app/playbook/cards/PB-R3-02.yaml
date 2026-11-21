@@ -1,0 +1,25 @@
+card_id: PB-R3-02
+title: 断货款详情页挂替代款承接
+root_causes: [R3]
+metrics: [cvr, paid_orders, gmv, uv]
+risk: 1
+scope: [sku, style, channel]
+action_type: swap_creative
+preconditions:
+  - 主推 SKU 已断货或可售不足 2 天，但链接日均访客仍有 500 以上
+  - 店内有 2~3 个同价格带、同风格的替代款，库存可售 15 天以上
+  - 替代款与断货款同品类，价格差不超过 15%，可替代性强
+steps:
+  - 断货款详情页首屏下方插入「同类热销推荐」模块，放 3 个替代款，标注库存充足与 48 小时发货
+  - 断货款主图第 2 张加角标「本款暂时缺货，同款推荐点这里」，减少用户直接跳出
+  - 客服自动回复改为「这款补货中，X 款同材质同价位，今天下单明天发」，并附商品链接
+  - 把断货款的加购未支付、收藏人群包定向推到替代款，预算从断货款计划挪出
+  - 每天看承接率（替代款支付单 ÷ 断货款访客），低于 3% 就换推荐位商品或调整排序
+expected_effect:
+  metric: gmv
+  direction: up
+  range: [0.08, 0.18]
+  window_days: 7
+success_metric: paid_orders
+source: 行业实践（断货流量承接 SOP）
+version: 1

@@ -1,0 +1,24 @@
+card_id: PB-R10-01
+title: 超时订单主动触达与补偿
+root_causes: [R10]
+metrics: [refund_rate, neg_review_rate, dsr, cvr]
+risk: 1
+scope: [sku, store]
+action_type: issue_coupon
+preconditions:
+  - 延迟发货订单占比超过 5%，退款原因中「物流慢」「未按时发货」占比超过 25%
+  - 差评集中在同一承运商，且 DSR 发货速度分低于 4.6
+  - 承诺 48h 发货，实际 72h 后才签收的订单占比超过 20%
+steps:
+  - 每天 10:00 拉一次超时未发货清单，按承诺时效 +24h 判定，客服 2h 内一对一触达
+  - 话术给两个选项：继续等补 10 元无门槛券，或改发顺丰、差价店铺承担
+  - 超时 48h 仍未发出的订单直接补 20 元券并升级优先发货，成本记物流专项
+  - 每周复盘超时订单的承运商分布，连续两周占比最高的承运商进入淘汰评估
+expected_effect:
+  metric: refund_rate
+  direction: down
+  range: [0.20, 0.35]
+  window_days: 21
+success_metric: neg_review_rate
+source: 平台物流体验分规则 + 客服 SOP
+version: 1

@@ -1,0 +1,165 @@
+/* 登录 / 改密页：一张居中卡片，不显示导航，避免「未登录还能点」的错觉 */
+
+.lg {
+  min-block-size: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(0, 113, 227, 0.08), transparent 60%),
+    var(--bg, #f5f5f7);
+  color: var(--ink, #1d1d1f);
+}
+
+.lg__card {
+  inline-size: min(420px, 100%);
+  padding: 32px 30px 26px;
+  border-radius: var(--r-lg, 18px);
+  background: var(--surface, #fff);
+  border: 1px solid var(--line, rgba(0, 0, 0, 0.08));
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 18px 48px rgba(0, 0, 0, 0.08);
+}
+
+.lg__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block-end: 22px;
+}
+
+.lg__mark {
+  inline-size: 40px;
+  block-size: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--blue, #0071e3);
+  color: #fff;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.lg__title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.lg__sub {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-3, #86868b);
+}
+
+.lg__notice {
+  margin: 0 0 14px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: rgba(0, 113, 227, 0.08);
+  color: var(--blue-ink, #0058b0);
+  font-size: 12.5px;
+}
+
+.lg__form {
+  display: grid;
+  gap: 14px;
+}
+
+.lg__field {
+  display: grid;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--ink-2, #424245);
+}
+
+.lg__field input {
+  block-size: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong, rgba(0, 0, 0, 0.16));
+  background: var(--surface, #fff);
+  font-size: 14px;
+  color: inherit;
+  transition: border-color 0.16s var(--ease, ease), box-shadow 0.16s var(--ease, ease);
+}
+
+.lg__field input:focus-visible {
+  outline: none;
+  border-color: var(--blue, #0071e3);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.16);
+}
+
+.lg__error {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--red, #d70015);
+}
+
+.lg__submit {
+  block-size: 42px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--blue, #0071e3);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.16s var(--ease, ease), transform 0.16s var(--ease, ease);
+}
+
+.lg__submit:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.lg__submit:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.lg__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.lg__submit:focus-visible {
+  outline: 2px solid var(--blue, #0071e3);
+  outline-offset: 2px;
+}
+
+.lg__link {
+  justify-self: center;
+  border: 0;
+  background: none;
+  color: var(--ink-3, #86868b);
+  font-size: 12.5px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.lg__link:hover {
+  color: var(--ink-2, #424245);
+  text-decoration: underline;
+}
+
+.lg__foot {
+  margin: 18px 0 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--ink-3, #86868b);
+}
+
+@media (max-width: 420px) {
+  .lg__card {
+    padding: 24px 20px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lg__submit,
+  .lg__field input {
+    transition: none;
+  }
+}

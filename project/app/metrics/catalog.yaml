@@ -1,0 +1,177 @@
+# 指标语义层：Agent 只能选指标、维度、过滤条件，SQL 由编译器生成。
+# 改这里的 expr 不需要改代码；新增指标只要 source 是已注册的视图。
+version: 1
+owner: data-team
+
+# 维度分组：指标通过 dims 引用组名，避免 23 个指标各写一遍长列表
+dim_groups:
+  common: [dt, week, month, dow, season, is_promo, sku_id, style, fabric, color, price_band, supplier, category_l1, category_l2]
+  channel: [channel_id]
+  segment: [segment_id]
+  sku_only: [dt, week, month, sku_id, style, price_band, color, fabric, supplier]
+
+metrics:
+  # ---------------- 流量（traffic 视图）
+  - name: uv
+    display: 访客数
+    source: traffic
+    expr: "SUM(detail_uv)"
+    unit: count
+    dims: [common, channel]
+    description: 商品详情页访客数（近似店铺 UV）
+  - name: pv
+    display: 浏览量
+    source: traffic
+    expr: "SUM(clicks)"
+    unit: count
+    dims: [common, channel]
+    description: 商品点击/浏览量
+  - name: impressions
+    display: 曝光量
+    source: traffic
+    expr: "SUM(impressions)"
+    unit: count
+    dims: [common, channel]
+  - name: clicks
+    display: 点击量
+    source: traffic
+    expr: "SUM(clicks)"
+    unit: count
+    dims: [common, channel]
+  - name: ctr
+    display: 点击率
+    source: traffic
+    expr: "SUM(clicks) * 1.0 / NULLIF(SUM(impressions), 0)"
+    unit: ratio
+    dims: [common, channel]
+    description: 点击率 = 点击 / 曝光
+  - name: cvr
+    display: 支付转化率
+    source: traffic
+    expr: "SUM(paid_orders) * 1.0 / NULLIF(SUM(detail_uv), 0)"
+    unit: ratio
+    dims: [common, channel]
+    description: 详情页支付转化率 = 支付订单数 / 详情页 UV
+  - name: detail_uv
+    display: 详情页 UV
+    source: traffic
+    expr: "SUM(detail_uv)"
+    unit: count
+    dims: [common, channel]
+  - name: add_cart_uv
+    display: 加购 UV
+    source: traffic
+    expr: "SUM(add_cart_uv)"
+    unit: count
+    dims: [common, channel]
+  - name: add_cart_rate
+    display: 加购率
+    source: traffic
+    expr: "SUM(add_cart_uv) * 1.0 / NULLIF(SUM(detail_uv), 0)"
+    unit: ratio
+    dims: [common, channel]
+  - name: pay_buyers
+    display: 支付买家数
+    source: traffic
+    expr: "SUM(pay_uv)"
+    unit: count
+    dims: [common, channel]
+
+  # ---------------- 交易（orders 视图）
+  - name: gmv
+    display: 成交金额
+    source: orders
+    expr: "SUM(pay_amount)"
+    unit: currency
+    dims: [common, channel, segment]
+    description: 支付金额合计，按下单日归属
+  - name: paid_orders
+    display: 支付订单数
+    source: orders
+    expr: "COUNT(*)"
+    unit: count
+    dims: [common, channel, segment]
+  - name: aov
+    display: 客单价
+    source: orders
+    expr: "SUM(pay_amount) * 1.0 / NULLIF(COUNT(*), 0)"
+    unit: currency
+    dims: [common, channel, segment]
+  - name: unit_price
+    display: 件单价
+    source: orders
+    expr: "AVG(unit_price)"
+    unit: currency
+    dims: [common, channel, segment]
+  - name: gross_margin
+    display: 毛利率
+    source: orders
+    expr: "(SUM(pay_amount) - SUM(cost * qty)) * 1.0 / NULLIF(SUM(pay_amount), 0)"
+    unit: ratio
+    dims: [common, channel, segment]
+    description: (成交金额 - 商品成本) / 成交金额，不含投放费
+  - name: refund_rate
+    display: 退款率
+    source: orders
+    expr: "SUM(refund_flag) * 1.0 / NULLIF(COUNT(*), 0)"
+    unit: ratio
+    dims: [common, channel, segment]
+    description: 退款订单数 / 支付订单数，按下单日归属
+  - name: return_rate
+    display: 尺码退货率
+    source: orders
+    expr: "SUM(CASE WHEN reason_code = 'SIZE_SMALL' THEN 1 ELSE 0 END) * 1.0 / NULLIF(COUNT(*), 0)"
+    unit: ratio
+    dims: [common, channel, segment]
+    description: 尺码偏小导致的退款占订单比
+
+  # ---------------- 投放（ads 视图）
+  - name: ad_spend
+    display: 投放花费
+    source: ads
+    expr: "SUM(spend)"
+    unit: currency
+    dims: [common, channel]
+  - name: roi
+    display: 投放 ROI
+    source: ads
+    expr: "SUM(gmv) * 1.0 / NULLIF(SUM(spend), 0)"
+    unit: ratio
+    dims: [common, channel]
+  - name: cpc
+    display: 平均点击成本
+    source: ads
+    expr: "SUM(spend) * 1.0 / NULLIF(SUM(clicks), 0)"
+    unit: currency
+    dims: [common, channel]
+
+  # ---------------- 口碑（reviews 视图）
+  - name: neg_review_rate
+    display: 差评率
+    source: reviews
+    expr: "SUM(CASE WHEN rating <= 2 THEN 1 ELSE 0 END) * 1.0 / NULLIF(COUNT(*), 0)"
+    unit: ratio
+    dims: [sku_only]
+    description: 1-2 星评价占比
+  - name: dsr
+    display: 平均评分
+    source: reviews
+    expr: "AVG(rating)"
+    unit: score
+    dims: [sku_only]
+  - name: review_cnt
+    display: 评价数
+    source: reviews
+    expr: "COUNT(*)"
+    unit: count
+    dims: [sku_only]
+    description: 评价条数；差评率的分母，巡检时只当样本量、不作为异常上报
+
+  # ---------------- 库存（inventory 视图）
+  - name: stockout_rate
+    display: 断货率
+    source: inventory
+    expr: "AVG(stockout_flag)"
+    unit: ratio
+    dims: [sku_only]
+    description: SKU-日 维度上处于断货状态的比例

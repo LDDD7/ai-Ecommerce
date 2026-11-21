@@ -1,0 +1,16 @@
+# 镜像里不需要的东西：数据、素材、前端依赖、测试产物
+data/
+web/node_modules/
+web/dist/
+.tmp/
+.pytest_cache/
+__pycache__/
+*.pyc
+*.db
+*.db-wal
+*.db-shm
+.git/
+reference/
+docs/
+tests/
+*.md

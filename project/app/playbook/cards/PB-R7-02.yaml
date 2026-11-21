@@ -1,0 +1,24 @@
+card_id: PB-R7-02
+title: 节后内容种草补自然流量
+root_causes: [R7]
+metrics: [uv, detail_uv, ctr, add_cart_rate]
+risk: 0
+scope: [style, channel]
+action_type: swap_creative
+preconditions:
+  - 大促结束后自然搜索 UV 连续 7 天低于大促前 30 日均值的 60%
+  - 付费流量占比超过 55%，停投后曝光下滑 40% 以上
+  - 大促主推款仍有 3 个以上颜色或版型没做过内容素材
+steps:
+  - 选 5 个节后仍有库存的主推款，每款拍 1 条 15 秒「通勤一衣多穿」短视频，前 3 秒只出场景不出现价格
+  - 图文笔记按「人群痛点 + 面料细节 + 三套搭配」结构写，标题带季节词，不出现「大促」「清仓」
+  - 发布节奏为连续 10 天每天 2 条，11:30 与 19:30 各一条，每条投 100 元做冷启，CTR 低于 3% 的素材 48 小时内下线
+  - 第 14 天把 CTR 前 20% 的素材挂到详情页首屏与搜索主图，替换大促遗留素材
+expected_effect:
+  metric: uv
+  direction: up
+  range: [0.12, 0.25]
+  window_days: 21
+success_metric: ctr
+source: 内容场运营 SOP + 平台自然流量分发规则
+version: 1

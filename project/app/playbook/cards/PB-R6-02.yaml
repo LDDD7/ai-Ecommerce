@@ -1,0 +1,24 @@
+card_id: PB-R6-02
+title: 定位问题批次并暂停推广
+root_causes: [R6]
+metrics: [neg_review_rate, dsr, return_rate]
+risk: 1
+scope: [sku, store]
+action_type: restock_alert
+preconditions:
+  - 差评中「开线」「异味」「破损」等质量词占比超过 40%
+  - 同一 SKU 近 3 天差评超过 10 条，且集中在同一生产批次
+  - 退货原因 QUALITY 占比环比上升 50% 以上
+steps:
+  - 按批次号盘点在库与在途库存，锁定问题批次并暂停发货
+  - 向供应商发质量反馈单，要求 48h 内给出换货或补货方案，同步冻结该批次结算
+  - 问题批次 SKU 暂停直通车与万相台推广，避免差评继续扩散
+  - 仓库对同款其他批次抽检 30 件，合格后才恢复上架与推广
+expected_effect:
+  metric: neg_review_rate
+  direction: down
+  range: [0.25, 0.5]
+  window_days: 21
+success_metric: dsr
+source: 行业实践（批次质量管理）+ 平台规则
+version: 1

@@ -1,0 +1,24 @@
+card_id: PB-R5-01
+title: 关停低效计划并回收预算
+root_causes: [R5]
+metrics: [roi, ad_spend, gmv]
+risk: 1
+scope: [channel, store]
+action_type: adjust_bid
+preconditions:
+  - ROI 连续 5 天低于 3.0，且日消耗环比上升 20% 以上
+  - 消耗占比超过 30% 的计划 ROI 低于 2.5
+  - CPC 环比上涨 15% 而 CVR 没有提升
+steps:
+  - 关停 ROI 低于 2.5 且近 7 天无成交的计划，只暂停不删除，保留历史数据
+  - 把预算回收到 ROI 高于 4 的 3 个计划，单计划日预算上调不超过 30%
+  - ROI 在 3.0 到 4.0 之间的计划出价下调 15% 到 20%，48h 后再评估
+  - 每天 10:00 把消耗、GMV、ROI 记入投放日报，连续 3 天 ROI 高于 3.5 再恢复预算
+expected_effect:
+  metric: roi
+  direction: up
+  range: [0.2, 0.45]
+  window_days: 7
+success_metric: roi
+source: 行业实践（投放预算再分配）
+version: 1

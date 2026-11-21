@@ -1,0 +1,13 @@
+# 店诊 Agent 运行时依赖（核心，不含本地向量/重排）
+# 本地重排（bge-m3 + cross-encoder）见 requirements-embed.txt，装不进主依赖是为了让 CI/镜像轻量。
+fastapi==0.141.1
+uvicorn==0.52.1
+pydantic==2.13.4
+pydantic-settings==2.15.0
+PyYAML==6.0.3
+httpx==0.28.1
+openai==2.53.0
+anyio==4.14.2
+python-multipart==0.0.32
+numpy==2.5.1
+Pillow==12.3.0

@@ -1,0 +1,25 @@
+card_id: PB-R2-02
+title: 三图轮测，48 小时淘汰制
+root_causes: [R2]
+metrics: [ctr, clicks, impressions, cvr]
+risk: 1
+scope: [sku, style, channel]
+action_type: swap_creative
+preconditions:
+  - 连续 14 天 CTR 低于类目均值，且已排除价格、库存、流量结构变化的影响
+  - 手上至少有 3 套可用主图素材（不同卖点或不同场景），单套制作成本 200 元以内
+  - 日均曝光 5000 以上，48 小时内能积累足够测试样本
+steps:
+  - 一次准备 3 张测试图，分别主打材质细节、使用场景、利益点角标，同一轮只测一个变量
+  - 用平台测图工具或手动 33/33/34 分流，每 48 小时结算一次，单张样本下限 2000 曝光
+  - 淘汰 CTR 垫底的一张并补入新图，CTR 第一保留为基准图，连续 3 轮约 6 天完成一个周期
+  - 把稳定领先基准图 15% 以上的图设为正式首图，全量后继续留一张备选在测
+  - 建素材台账：记录上线日、CTR、淘汰原因，任何首图满 21 天强制进入下一轮测试
+expected_effect:
+  metric: ctr
+  direction: up
+  range: [0.08, 0.2]
+  window_days: 10
+success_metric: ctr
+source: 行业实践（主图 A/B 测试流程）
+version: 1

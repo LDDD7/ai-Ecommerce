@@ -1,0 +1,24 @@
+card_id: PB-R4-01
+title: 补齐尺码表与试穿建议
+root_causes: [R4]
+metrics: [refund_rate, return_rate, neg_review_rate]
+risk: 1
+scope: [sku, style]
+action_type: swap_creative
+preconditions:
+  - 退款原因中「尺码偏小」占比超过 30%
+  - 主图或详情页缺少尺码表，或只有一张模糊的工厂尺码图
+  - 差评里出现「偏小」「穿不下」「和描述不符」等关键词
+steps:
+  - 详情页首屏加尺码表：衣长、胸围、腰围、肩宽，标注测量方式与误差范围
+  - 补三条身材参考：155/45kg 选 S、162/52kg 选 M、168/58kg 选 L
+  - 主图第二张换成尺码对照卡，替代原纯白底图
+  - 客服快捷话术加「此款偏小一码，建议拍大一码」，并在下单页提示
+expected_effect:
+  metric: refund_rate
+  direction: down
+  range: [0.15, 0.35]
+  window_days: 14
+success_metric: return_rate
+source: 平台规则（尺码信息规范）+ 行业实践
+version: 1

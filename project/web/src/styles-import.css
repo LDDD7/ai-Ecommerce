@@ -1,0 +1,542 @@
+/* 数据导入页：上传 → 字段映射 → 质量报告 → 入库记录。
+   类名统一 .im-*，只在本视图内使用。 */
+
+.im {
+  display: grid;
+  gap: 14px;
+  margin-block-start: 6px;
+}
+
+.im-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+}
+
+.im-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.im-card__head h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.im-card__hint {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+/* ---- 当前数据 ---- */
+
+.im-cap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+
+.im-cap__title {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.im-cap__missing {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--amber);
+}
+
+.im-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-size: 12px;
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.im-chip b {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.im-chip--on {
+  border-color: color-mix(in srgb, var(--green) 35%, transparent);
+  background: color-mix(in srgb, var(--green) 8%, transparent);
+  color: var(--green);
+}
+
+.im-chip--off {
+  color: var(--ink-3);
+  border-style: dashed;
+}
+
+/* ---- 选择文件 ---- */
+
+.im-pick {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-block-start: 12px;
+}
+
+.im-pick input[type="file"] {
+  font: inherit;
+  font-size: 13px;
+  max-width: 100%;
+}
+
+.im-pick input[type="file"]::file-selector-button {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 12px;
+  margin-inline-end: 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+
+.im-pick input[type="file"]::file-selector-button:hover {
+  background: var(--bg);
+  border-color: var(--ink-3);
+}
+
+.im-pick__data {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.im-pick__data select {
+  font: inherit;
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.im-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-block-start: 12px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.im-meta b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.im-meta__file {
+  font-family: var(--mono);
+  max-width: 42ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.im-meta__busy {
+  color: var(--blue);
+}
+
+.im-error {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--red) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--red) 22%, transparent);
+  color: var(--red);
+  font-size: 13px;
+}
+
+/* ---- 字段映射 ---- */
+
+.im-map {
+  margin-block-start: 14px;
+  overflow-x: auto;
+}
+
+.im-map table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.im-map th {
+  text-align: start;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 0 10px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.im-map td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.im-map tr.is-required .im-map__label {
+  font-weight: 600;
+}
+
+.im-map td select {
+  font: inherit;
+  font-size: 13px;
+  width: 100%;
+  max-width: 260px;
+  padding: 5px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.im-map__req {
+  margin-inline-start: 6px;
+  font-size: 10px;
+  color: var(--red);
+  border: 1px solid color-mix(in srgb, var(--red) 30%, transparent);
+  border-radius: var(--r-pill);
+  padding: 0 6px;
+}
+
+.im-map__score {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--green);
+}
+
+.im-map__score--manual {
+  color: var(--blue);
+}
+
+.im-map__score--none {
+  color: var(--ink-3);
+}
+
+/* ---- 质量报告 ---- */
+
+.im-verdict {
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.im-verdict--pass {
+  color: var(--green);
+  border-color: color-mix(in srgb, var(--green) 35%, transparent);
+  background: color-mix(in srgb, var(--green) 8%, transparent);
+}
+
+.im-verdict--warn {
+  color: var(--amber);
+  border-color: color-mix(in srgb, var(--amber) 35%, transparent);
+  background: color-mix(in srgb, var(--amber) 8%, transparent);
+}
+
+.im-verdict--reject {
+  color: var(--red);
+  border-color: color-mix(in srgb, var(--red) 35%, transparent);
+  background: color-mix(in srgb, var(--red) 8%, transparent);
+}
+
+.im-report {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-block-start: 14px;
+}
+
+.im-report div {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: var(--bg);
+}
+
+.im-report span {
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.im-report b {
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  min-inline-size: 0;
+}
+
+.im-reasons {
+  margin: 12px 0 0;
+  padding-inline-start: 18px;
+  font-size: 13px;
+  color: var(--amber);
+}
+
+.im-reasons li + li {
+  margin-block-start: 4px;
+}
+
+.im-samples {
+  margin-block-start: 12px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.im-samples summary {
+  cursor: pointer;
+  color: var(--ink-3);
+}
+
+.im-samples ul {
+  margin: 8px 0 0;
+  padding-inline-start: 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.im-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-block-start: 16px;
+}
+
+.im-actions__hint {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.im-btn {
+  font: inherit;
+  font-size: 13px;
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease);
+}
+
+.im-btn:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+.im-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.im-btn--primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+.im-btn--primary:hover:not(:disabled) {
+  background: var(--blue-ink);
+}
+
+.im-btn:focus-visible,
+.im-pick input[type="file"]::file-selector-button:focus-visible,
+.im-map td select:focus-visible,
+.im-pick__data select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.im-done {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--green) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--green) 25%, transparent);
+  color: var(--green);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- 导入记录 ---- */
+
+.im-runs {
+  width: 100%;
+  border-collapse: collapse;
+  margin-block-start: 12px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.im-runs th {
+  text-align: start;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 0 10px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.im-runs td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+}
+
+.im-runs__file {
+  font-family: var(--mono);
+  font-size: 12px;
+  max-width: 30ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.im-empty {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+/* ---- 提交前差异确认 ---- */
+
+.im-diff {
+  margin-block-start: 14px;
+  padding: 14px 16px;
+  border-radius: var(--r-md);
+  border: 1px solid color-mix(in srgb, var(--amber) 32%, transparent);
+  background: color-mix(in srgb, var(--amber) 6%, transparent);
+}
+
+.im-diff__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.im-diff__head span {
+  font-size: 12px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.im-diff__list {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.im-diff__list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.im-diff__key {
+  font-family: var(--mono);
+  color: var(--ink-2);
+  min-inline-size: 12ch;
+}
+
+.im-diff__change {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--ink-3);
+}
+
+.im-diff__change s {
+  color: var(--ink-3);
+}
+
+.im-diff__change b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.im-btn--tiny {
+  font-size: 12px;
+  padding: 4px 12px;
+}
+
+.im-btn.is-armed {
+  border-color: color-mix(in srgb, var(--red) 45%, transparent);
+  color: var(--red);
+}
+
+.im-verdict--undone {
+  color: var(--ink-3);
+  border-color: var(--line);
+  background: var(--bg);
+}
+
+.im-runs tr.is-undone td {
+  color: var(--ink-3);
+}
+
+.im-runs__muted {
+  color: var(--ink-3);
+}
+
+@media (max-width: 720px) {
+  .im-map td select {
+    max-width: none;
+  }
+
+  .im-meta__file,
+  .im-runs__file {
+    max-width: 18ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .im-btn,
+  .im-pick input[type="file"]::file-selector-button {
+    transition: none;
+  }
+}

@@ -1,0 +1,24 @@
+card_id: PB-R8-03
+title: 报名平台活动并用直播承接
+root_causes: [R8]
+metrics: [gmv, paid_orders, pay_buyers, cvr, aov]
+risk: 2
+scope: [store, channel]
+action_type: issue_coupon
+preconditions:
+  - 近 14 天店铺 GMV 环比下滑超过 20%，且竞品已报名同档期平台活动
+  - 按活动价测算后毛利率仍不低于 30%
+  - 直播间近 30 天场均观看低于 500 人，站内自然流量不足以承接
+steps:
+  - 报名平台品类日，活动价按日常价 85 折报，叠加平台满 300 减 40，店铺不再额外发券
+  - 活动前 3 天开 3 场预热直播，每场 2 小时，挂活动预约链接，预约目标 800 人
+  - 活动期每天 20 点到 23 点开播，话术固定讲活动价、赠品与尺码建议，每小时抽 1 次免单
+  - 活动结束后 48 小时内活动款恢复日常价，未售完库存转下一档期，不连续打折
+expected_effect:
+  metric: gmv
+  direction: up
+  range: [0.14, 0.30]
+  window_days: 14
+success_metric: cvr
+source: 平台活动报名规则 + 直播承接复盘
+version: 1

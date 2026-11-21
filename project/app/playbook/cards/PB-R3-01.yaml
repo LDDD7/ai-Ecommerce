@@ -1,0 +1,25 @@
+card_id: PB-R3-01
+title: 可售不足 3 天，紧急补货
+root_causes: [R3]
+metrics: [stockout_rate, paid_orders, gmv, uv]
+risk: 0
+scope: [sku, style]
+action_type: restock_alert
+preconditions:
+  - 库存可售天数低于 3 天，且近 7 天日均销量超过 20 单
+  - 供应商有现货或交期不超过 7 天，可接受空运、顺丰补货
+  - 该 SKU 近 30 天贡献店铺 GMV 5% 以上，断货损失大于补货成本
+steps:
+  - 按「日均销量 ×（交期 + 7 天安全库存）」算补货量，如日均 30 单、交期 5 天则补 360 件
+  - 当天发采购单并锁供应商产能，首批 30% 走空运或顺丰，其余走常规物流，运费计入毛利测算
+  - 在 ERP 设两级预警：可售 7 天提醒、3 天强提醒，触发后自动抄送店长与采购
+  - 补货在途期间库存按真实可售展示，暂停「满 2 件包邮」等加速消耗的活动
+  - 到货后 24 小时内恢复主推位与投放，观察 3 天支付单量是否回到断货前 90%
+expected_effect:
+  metric: stockout_rate
+  direction: down
+  range: [0.3, 0.55]
+  window_days: 7
+success_metric: paid_orders
+source: 行业实践（安全库存与补货预警）
+version: 1

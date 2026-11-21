@@ -1,0 +1,579 @@
+/* 设置页：沿用前面的纸色/Apple 令牌，表单克制一点，别抢诊断书的风头 */
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-block: 26px 8px;
+}
+
+.settings__head h2 {
+  margin: 0 0 6px;
+  font-family: var(--serif);
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.settings__head .hint {
+  margin: 0;
+  max-inline-size: 62ch;
+  color: var(--ink-2);
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+
+.settings__head code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+
+.settings__status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+.pill--ok {
+  color: var(--moss, #3f6b52);
+  background: color-mix(in srgb, var(--moss, #3f6b52) 10%, var(--surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--moss, #3f6b52) 26%, transparent);
+}
+
+.pill--flat {
+  color: var(--ink-2);
+}
+
+.settings__group {
+  margin: 0;
+  padding: 18px 20px 20px;
+  border: 0;
+  border-radius: var(--r-lg, 20px);
+  background: var(--surface);
+  box-shadow: var(--shadow-1, 0 1px 2px rgba(0, 0, 0, 0.06));
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.settings__group legend {
+  padding-inline: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.settings__providers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preset {
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--ink-2);
+  background: color-mix(in srgb, var(--ink) 5%, var(--surface));
+  cursor: pointer;
+  transition: background var(--t, 240ms) var(--ease, ease), color var(--t, 240ms) var(--ease, ease);
+}
+
+.preset:hover {
+  background: color-mix(in srgb, var(--ink) 9%, var(--surface));
+}
+
+.preset--on {
+  color: #fff;
+  background: var(--blue, #0071e3);
+}
+
+.preset--on:hover {
+  background: color-mix(in srgb, var(--blue, #0071e3) 88%, #000);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-inline-size: 0;
+}
+
+.field > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.field--narrow {
+  max-inline-size: 320px;
+}
+
+.src {
+  font-style: normal;
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  color: var(--ink-3);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+
+.src--db {
+  color: var(--blue, #0071e3);
+  background: color-mix(in srgb, var(--blue, #0071e3) 12%, transparent);
+}
+
+.field input,
+.field select {
+  inline-size: 100%;
+  min-inline-size: 0;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 4%, var(--surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent);
+  transition: box-shadow var(--t, 240ms) var(--ease, ease);
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1.5px var(--blue, #0071e3),
+    0 0 0 4px color-mix(in srgb, var(--blue, #0071e3) 16%, transparent);
+}
+
+.field small {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+.settings__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.settings__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background: var(--blue, #0071e3);
+  cursor: pointer;
+  transition: transform 160ms var(--ease, ease), opacity 160ms var(--ease, ease);
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.btn--ghost {
+  color: var(--ink);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 14%, transparent);
+}
+
+.btn--danger {
+  color: var(--red, #d70015);
+  background: color-mix(in srgb, var(--red, #d70015) 10%, var(--surface));
+}
+
+.note--ok {
+  color: var(--moss, #3f6b52);
+}
+
+.note--bad {
+  color: var(--red, #d70015);
+}
+
+.note--flat {
+  color: var(--ink-2);
+}
+
+.settings__foot {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .settings__group {
+    padding: 14px 14px 16px;
+  }
+
+  .settings__actions .btn {
+    flex: 1 1 auto;
+  }
+}
+
+/* ----------------------------- 账号与权限 ----------------------------- */
+
+.acc {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.acc th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--ink-3);
+  padding: 0 10px 8px 0;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.acc td {
+  padding: 10px 10px 10px 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.acc tr:last-child td {
+  border-bottom: 0;
+}
+
+.acc__row--off td {
+  color: var(--ink-3);
+}
+
+.acc__self {
+  margin-inline-start: 6px;
+  padding: 0 6px;
+  border-radius: var(--r-pill);
+  background: rgba(0, 113, 227, 0.1);
+  color: var(--blue-ink);
+  font-size: 11px;
+}
+
+.acc__login {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+.acc__time {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.acc select {
+  block-size: 30px;
+  padding: 0 6px;
+  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: inherit;
+  font-size: 12.5px;
+}
+
+.acc__ops {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.acc__btn {
+  min-height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.acc__btn:hover:not(:disabled) {
+  color: var(--ink);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.acc__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.acc__btn:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+}
+
+.acc__add {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+}
+
+.acc__add .btn {
+  margin-block-end: 0;
+}
+
+@media (max-width: 860px) {
+  .acc__add {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .acc__add .btn {
+    grid-column: 1 / -1;
+  }
+
+  .acc {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* 促销日历（spec §28）：和「账号与权限」同一块的姊妹区，用虚线分隔 */
+.pc {
+  margin-block-start: 28px;
+  padding-block-start: 22px;
+  border-top: 1px dashed var(--line);
+}
+
+.pc__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.pc__title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.pc__desc {
+  max-inline-size: 62ch;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--ink-3);
+}
+
+.pc__stat {
+  flex: none;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.pc__stat b {
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.pc__range {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+.pc__tablewrap {
+  margin-block-start: 14px;
+  overflow-x: auto;
+}
+
+.pc__table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.pc__table th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--ink-3);
+  padding: 0 10px 8px 0;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.pc__table td {
+  padding: 10px 10px 10px 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.pc__table tr:last-child td {
+  border-bottom: 0;
+}
+
+.pc__dates {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+
+.pc__num {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+
+.pc__note {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+.pc__btn {
+  min-height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pc__btn:hover:not(:disabled) {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+.pc__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pc__btn:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+}
+
+.pc__add {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) 120px 150px 150px auto;
+  align-items: end;
+  gap: 10px;
+  margin-block-start: 18px;
+  padding-block-start: 14px;
+  border-top: 1px dashed var(--line);
+}
+
+.pc__field {
+  display: grid;
+  gap: 6px;
+  min-inline-size: 0;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.pc__field input,
+.pc__field select {
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  min-inline-size: 0;
+  padding: 7px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: var(--surface);
+}
+
+.pc__field input:focus-visible,
+.pc__field select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+}
+
+.pc__submit {
+  white-space: nowrap;
+}
+
+.pc__hint {
+  margin-block-start: 10px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.pc__hint--foot {
+  margin-block-start: 16px;
+}
+
+.pc__error {
+  margin-block-start: 10px;
+  font-size: 12.5px;
+  color: var(--red);
+}
+
+.pc__note-line {
+  margin-block-start: 10px;
+  font-size: 12.5px;
+  color: var(--moss);
+}
+
+@media (max-width: 860px) {
+  .pc__add {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pc__submit {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc__btn,
+  .pc__field input,
+  .pc__field select {
+    transition: none;
+  }
+}

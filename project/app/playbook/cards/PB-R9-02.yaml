@@ -1,0 +1,24 @@
+card_id: PB-R9-02
+title: 券后价对齐主流价格带
+root_causes: [R9]
+metrics: [cvr, gmv, aov, add_cart_rate]
+risk: 1
+scope: [sku, channel]
+action_type: issue_coupon
+preconditions:
+  - 到手价高于主流价格带 10%~20%，但直接降价会击穿毛利底线
+  - 加购率高于同类 10%，加购后 24h 内下单率低于 15%
+  - 竞品在同价格带用「满减 + 赠品」而非直接降价
+steps:
+  - 设一张限时券：满 129 减 15、满 199 减 30，券后价落在 99~119 元主流带
+  - 券只投搜索与推荐两个高意图渠道，日限额 3000 元，先跑 3 天
+  - 同步上「主品 + 配件」组合装，组合价对齐 129 元，拉高客单而不破单件价
+  - 72h 看核销率与 CVR：核销率低于 40% 就把券面额加 5 元，高于 70% 则缩量 30%
+expected_effect:
+  metric: cvr
+  direction: up
+  range: [0.05, 0.12]
+  window_days: 7
+success_metric: aov
+source: 类目价格带 + 优惠券策略实践
+version: 1

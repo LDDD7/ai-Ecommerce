@@ -1,0 +1,24 @@
+card_id: PB-R7-03
+title: 节后滞销款阶梯清库存
+root_causes: [R7]
+metrics: [paid_orders, gmv, aov, unit_price]
+risk: 2
+scope: [sku, style]
+action_type: adjust_price
+preconditions:
+  - 大促后剩余库存可售天数超过 45 天，且近 14 天动销率低于 20%
+  - 大促折扣已回收，当前售价高于近 90 天成交均价 10% 以上
+  - 同款在竞品渠道已出现 20% 以上降价
+steps:
+  - 按库存深度分三档，可售天数超过 60 天降 15%，45 到 60 天降 10%，低于 45 天不降价只做搭配推荐
+  - 降价用「限时价」不用改一口价，单次生效 7 天到期自动回价，避免击穿价格带
+  - 清库存款不与大促主推款同页面展示，防止比价拉低主推款转化
+  - 每 3 天看一次动销率，动销率回升到 35% 以上即停止降价
+expected_effect:
+  metric: paid_orders
+  direction: up
+  range: [0.08, 0.20]
+  window_days: 14
+success_metric: aov
+source: 库存周转管理规范 + 价格带保护规则
+version: 1

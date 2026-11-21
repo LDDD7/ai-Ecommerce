@@ -1,0 +1,25 @@
+card_id: PB-R1-01
+title: 阶梯跟价，盯 24 小时转化回升
+root_causes: [R1]
+metrics: [cvr, gmv, paid_orders, unit_price, gross_margin]
+risk: 2
+scope: [sku, style]
+action_type: adjust_price
+preconditions:
+  - 竞品到手价低于我方同款 8% 以上，且价差已持续 3 天
+  - 我方支付转化率环比下滑超过 20%，加购率同步下滑
+  - 当前毛利率仍有 25% 以上空间，跟价后不低于 15%
+steps:
+  - 先算清竞品到手价：标价减店铺券减平台满减，按同 SKU 同规格对齐，不拿大促价对比日常价
+  - 第一档只降 3%，改 SKU 价不改划线价，观察 24 小时 CVR 与支付单量，不动其他在售 SKU
+  - CVR 回升不足 10% 再降 2%，单次降幅不超过 5%，累计降幅不超过 8%，每档至少观察 24 小时
+  - 详情页首屏补一行「同款同质，价保 15 天」，客服话术同步，减少比价流失
+  - 设 7 天止损线：毛利率跌破 15% 或竞品继续降价，停止跟价，转组合装或差异化卖点方案
+expected_effect:
+  metric: cvr
+  direction: up
+  range: [0.12, 0.28]
+  window_days: 5
+success_metric: gmv
+source: 行业实践（竞品跟价 SOP）+ 平台价格力规则
+version: 1

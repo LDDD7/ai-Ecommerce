@@ -1,0 +1,24 @@
+card_id: PB-R8-02
+title: 差异化卖点换主图抢点击
+root_causes: [R8]
+metrics: [ctr, clicks, detail_uv, add_cart_rate]
+risk: 1
+scope: [style, channel]
+action_type: swap_creative
+preconditions:
+  - 近 14 天 CTR 连续下滑，累计跌幅超过 20%，且低于同类目均值
+  - 竞品主图集中在纯白底加价格标签，同质化严重
+  - 商品有可验证的差异点（面料克重、工艺、版型），但现有主图没有表达
+steps:
+  - 主图第一张从纯白底换成「场景 + 差异点」构图，差异点用不超过 6 个字标注，如「260g 重磅棉」
+  - 一次只改一张主图，A/B 各跑 7 天，单组曝光不低于 5 万，按 CTR 与加购率选优
+  - 第二张放对比实拍，同价位普通款与本款在克重、走线上的对比，不写贬低竞品的文案
+  - 胜出素材同步到搜索图与详情页首屏，落败素材 7 天内不再复用
+expected_effect:
+  metric: ctr
+  direction: up
+  range: [0.08, 0.20]
+  window_days: 14
+success_metric: add_cart_rate
+source: 主图点击率优化 SOP + 类目素材基准
+version: 1

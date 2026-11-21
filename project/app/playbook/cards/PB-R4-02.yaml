@@ -1,0 +1,24 @@
+card_id: PB-R4-02
+title: 用实拍与面料参数消除预期偏差
+root_causes: [R4]
+metrics: [refund_rate, return_rate, neg_review_rate]
+risk: 1
+scope: [sku, style]
+action_type: swap_creative
+preconditions:
+  - 退货原因中「色差」与「材质不符」合计占比超过 25%
+  - 详情页全部使用供应商精修图，没有一张实拍图
+  - 近 30 天差评高频词出现「色差」「起球」「和图片不一样」
+steps:
+  - 拍 6 张自然光实拍图：平铺正面、背面、袖口走线、面料近景、160cm 与 170cm 上身各一张
+  - 详情页加面料参数表：成分、克重、缩水率、是否透光、洗涤方式，标注实物色差范围
+  - 标题与卖点删掉「高级感」「显瘦」等主观词，换成可验证参数，如「260g 重磅纯棉」
+  - 客服话术补充色差与洗涤预期，下单页提示「深色首洗可能轻微掉色」
+expected_effect:
+  metric: refund_rate
+  direction: down
+  range: [0.12, 0.28]
+  window_days: 21
+success_metric: neg_review_rate
+source: 行业实践（详情页信息完整度）+ 平台规则
+version: 1

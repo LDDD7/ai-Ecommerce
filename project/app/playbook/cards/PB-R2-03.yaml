@@ -1,0 +1,25 @@
+card_id: PB-R2-03
+title: 首图挂 3 秒卖点短视频
+root_causes: [R2]
+metrics: [ctr, clicks, pv, uv]
+risk: 1
+scope: [sku, style]
+action_type: swap_creative
+preconditions:
+  - 类目 TOP20 中已有 30% 以上使用主图视频，我方仍为纯静态图
+  - CTR 连续 7 天低于同层均值 20% 以上，且静态图已换过 2 轮仍无明显改善
+  - 商品有可实拍的使用过程或对比效果，如防水、承重、上身效果
+steps:
+  - 拍 3 秒竖版视频：0~1 秒给钩子（痛点或反差画面），1~3 秒给结果，不配旁白只留大字幕
+  - 首帧直接沿用当前 CTR 最高的静态图，保证静音自动播放时看起来仍是一张好首图
+  - 视频码率压到 2Mbps 以内、文件不超过 3MB，加载超过 2 秒就重剪
+  - 先放 30% 流量测 72 小时，播放率 40% 以上且 CTR 提升 10% 以上再全量
+  - 全量后把视频前 3 秒剪成 15 秒版本放详情页头图，同一素材复用，降低单条成本
+expected_effect:
+  metric: ctr
+  direction: up
+  range: [0.1, 0.25]
+  window_days: 14
+success_metric: clicks
+source: 平台主图视频规范 + 行业实践
+version: 1

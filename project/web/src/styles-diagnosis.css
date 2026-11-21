@@ -1,0 +1,441 @@
+/* 诊断书装饰层：在 Apple 中性底上，只加「诊断书」这一件有性格的事。 */
+
+:root {
+  --serif: "Songti SC", "Noto Serif SC", "Source Han Serif SC", "STSong", serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+}
+
+/* --------------------------------- 抬头 --------------------------------- */
+
+.verdict {
+  position: relative;
+  margin: 6px 0 26px;
+  padding: clamp(22px, 3.4vw, 36px) clamp(20px, 3.6vw, 42px) clamp(16px, 2.4vw, 22px);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.verdict__eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 16px;
+  margin: 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.verdict__kicker {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 15px;
+  letter-spacing: 0.12em;
+}
+
+.verdict__kicker::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 8px;
+  vertical-align: 2px;
+  background: var(--seal);
+}
+
+.verdict__vs {
+  margin-left: auto;
+}
+
+.verdict__line {
+  margin: 22px 0 0;
+  max-inline-size: 34ch;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(21px, 2.3vw, 29px);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  text-wrap: pretty;
+  animation: verdict-rise 460ms var(--ease) backwards;
+}
+
+.verdict__line strong {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* 红笔圈注：唯一一处刻意的「手写痕迹」，其余全部保持克制。 */
+.verdict__mark {
+  position: relative;
+  display: inline-block;
+  padding: 0 5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.verdict__mark i {
+  font-style: normal;
+  font-size: 0.72em;
+  margin-left: 1px;
+}
+
+.verdict__mark::before {
+  content: "";
+  position: absolute;
+  inset: -7px -11px -4px -9px;
+  border: 1.6px solid var(--seal);
+  border-radius: 50%;
+  opacity: 0.5;
+  transform: rotate(-1.8deg) scaleY(1.14);
+  animation: verdict-mark-in 520ms var(--ease) 240ms backwards;
+  pointer-events: none;
+}
+
+.verdict__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 16px 22px;
+  margin: 26px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.verdict__stats dt {
+  color: var(--ink-2);
+  font-size: 12px;
+}
+
+.verdict__stats dd {
+  margin: 5px 0 0;
+  min-inline-size: 0;
+  color: var(--ink);
+  font-size: clamp(18px, 1.8vw, 21px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.verdict__stats dd small {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.verdict__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 18px;
+  margin: 20px 0 0;
+  color: var(--ink-2);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------ 走势与卡片细节 ------------------------------ */
+
+.spark__dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spark-pulse 2.6s ease-in-out infinite;
+}
+
+.spark figcaption em {
+  margin-left: 10px;
+  font-style: normal;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.card-row--high {
+  border-inline-start: 2px solid var(--seal);
+}
+
+.card-row--medium {
+  border-inline-start: 2px solid var(--amber);
+}
+
+.kpi {
+  animation: verdict-rise 380ms var(--ease) backwards;
+}
+
+.card-row {
+  animation: verdict-rise 380ms var(--ease) backwards;
+}
+
+/* --------------------------- 抬头字体与卡片序号 --------------------------- */
+
+.sheet__head h1 {
+  font-family: var(--serif);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.eyebrow {
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+}
+
+.sheet__head .sub {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 证据表：表头数字列与单元格同向对齐，否则「基线/当期/z」会与右侧数字错开一列 */
+.evidence thead th.num {
+  text-align: right;
+}
+
+/* 固定列宽，让同屏几张卡的列位置完全一致，数字才能成列对齐 */
+.table-wrap > .evidence {
+  table-layout: fixed;
+}
+
+.evidence thead th:nth-child(2),
+.evidence thead th:nth-child(3) {
+  width: 15%;
+}
+
+.evidence thead th:nth-child(4) {
+  width: 14%;
+}
+
+.evidence thead th:nth-child(5) {
+  width: 9%;
+}
+
+.evidence td {
+  overflow-wrap: anywhere;
+}
+
+/* 诊断卡按影响金额排序，序号即排名，放在 scope 行首，和标题同一左边界 */
+.dcard__rank {
+  margin-right: 8px;
+  color: var(--ink-2);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------- 动效 -------------------------------- */
+
+@keyframes verdict-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes verdict-mark-in {
+  from {
+    opacity: 0;
+    transform: rotate(-1.8deg) scaleY(1.14) scale(1.08);
+  }
+  to {
+    opacity: 0.5;
+    transform: rotate(-1.8deg) scaleY(1.14);
+  }
+}
+
+@keyframes spark-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verdict__line,
+  .verdict__mark::before,
+  .kpi,
+  .card-row,
+  .spark__dot {
+    animation: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .verdict__vs {
+    margin-left: 0;
+  }
+
+  .verdict__line {
+    max-inline-size: none;
+  }
+}
+
+/* 素材检查块：图 + 结论，放在诊断卡叙述与证据表之间。
+   左图右文，缩略图固定 104px，窗口再窄也不挤掉文字。 */
+.material {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  margin: 16px 0 4px;
+  padding: 14px;
+  border: 1px solid #ececee;
+  border-radius: 16px;
+  background: #fbfbfc;
+}
+
+.material__shot {
+  inline-size: 104px;
+  block-size: 104px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #efefef;
+}
+
+.material__body {
+  min-inline-size: 0;
+}
+
+.material__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: baseline;
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.material__score {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.material__warn {
+  font-size: 12px;
+  color: var(--amber);
+}
+
+/* 「生成改进素材」：克制的小胶囊，跟在素材检查标题行尾 */
+.material__improve {
+  margin-inline-start: auto;
+  padding: 4px 12px;
+  border: 1px solid var(--blue);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--blue);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background var(--t) var(--ease), color var(--t) var(--ease);
+}
+
+.material__improve:hover {
+  background: var(--blue);
+  color: #fff;
+}
+
+.material__improve:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .material__improve {
+    transition: none;
+  }
+}
+
+.material__list {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.material__item {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.material__item strong {
+  margin-inline-end: 6px;
+}
+
+.material__item span {
+  color: var(--ink-2);
+}
+
+.material__item--high strong {
+  color: var(--seal);
+}
+
+.material__ok {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--moss);
+}
+
+.material__meta {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-3);
+}
+
+@media (max-width: 640px) {
+  .material {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .material__shot {
+    inline-size: 100%;
+    block-size: 180px;
+  }
+}
+
+/* 第二轮复审标签：只标动作，不抢标题的字重 */
+.replan-tag {
+  display: inline-block;
+  margin-inline-start: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  vertical-align: 1px;
+  color: var(--ink-2);
+  background: rgb(0 0 0 / 4%);
+}
+
+.replan-tag--upgrade {
+  color: var(--green);
+  background: rgb(15 123 63 / 10%);
+}
+
+.replan-tag--drop {
+  color: var(--red);
+  background: rgb(215 0 21 / 9%);
+}
+
+.replan-tag--demote,
+.replan-tag--skip {
+  color: var(--amber);
+  background: rgb(154 91 0 / 10%);
+}
+

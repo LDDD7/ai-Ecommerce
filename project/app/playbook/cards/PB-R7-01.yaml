@@ -1,0 +1,25 @@
+card_id: PB-R7-01
+title: 大促返场三天阶梯收券
+root_causes: [R7]
+metrics: [gmv, paid_orders, aov, gross_margin]
+risk: 1
+scope: [store, channel]
+action_type: issue_coupon
+preconditions:
+  - 大促结束后 7 天内日均 GMV 环比大促期日均下滑超过 60%
+  - 大促促销日 GMV 占比从 40% 以上跌到 15% 以下
+  - 加购 UV 未同步下滑，加购率仍高于近 30 日均值（需求还在，只差临门一脚）
+  - 在售 SKU 库存可售天数大于 30 天
+steps:
+  - 返场 3 天：主推 TOP10 SKU 券面额从 50 降到 20，使用门槛从 299 提到 349，毛利率守住 38% 以上
+  - 第 4 天起券面额再降到 10，只发给「加购未支付」人群，单 SKU 日发放上限 200 张
+  - 返场期主图换「返场同价」角标，去掉倒计时与「仅此一天」文案，避免二次透支
+  - 每天 10 点复盘返场 GMV 与毛利率，毛利率跌破 35% 当天停券并把预算转回内容场
+expected_effect:
+  metric: gmv
+  direction: up
+  range: [0.10, 0.22]
+  window_days: 7
+success_metric: gross_margin
+source: 平台大促返场规范 + 近两年返场复盘
+version: 1

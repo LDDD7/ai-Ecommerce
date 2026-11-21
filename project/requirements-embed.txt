@@ -1,0 +1,7 @@
+# 本地向量与重排（可选）。不装也能跑：EMBED_MODE=off / RERANK_MODE=rule 时会自动降级。
+# 装了会多 ~2.5GB 依赖 + 两个各 1.9GB 的模型。
+sentence-transformers==5.1.2
+transformers==4.57.1
+torch==2.9.0
+tokenizers==0.22.1
+safetensors==0.6.2

@@ -1,0 +1,24 @@
+card_id: PB-R6-03
+title: 详情页预期管理与差评前置拦截
+root_causes: [R6]
+metrics: [neg_review_rate, return_rate, refund_rate]
+risk: 0
+scope: [sku, style]
+action_type: swap_creative
+preconditions:
+  - 差评高频词 Top3 与详情页主推卖点重合，如「不透气」「掉色」
+  - 详情页没有标注适用场景与使用限制
+  - 近 14 天因「预期不符」产生的退货占比超过 20%
+steps:
+  - 详情页补 3 条使用边界：透气性、可否机洗、深色首洗掉色范围
+  - 主图第 3 张换成未修图实拍，展示真实颜色与厚度
+  - 包裹内放售后卡，写明 48h 内联系客服优先处理，减少直接差评
+  - 对已下单未发货订单发提醒，说明色差与尺码建议，降低收货落差
+expected_effect:
+  metric: neg_review_rate
+  direction: down
+  range: [0.1, 0.25]
+  window_days: 30
+success_metric: return_rate
+source: 行业实践（预期管理）+ 平台规则
+version: 1

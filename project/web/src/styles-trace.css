@@ -1,0 +1,449 @@
+/* ==========================================================================
+   店诊 StoreDoctor —— Trace 查看器（一次问诊的动作与审计轨迹）
+   令牌、圆角、阴影、缓动沿用 styles.css；只新增 .tc__* 一族类。
+   不重定义 .chip / .btn / .note / .tabs；动效只碰 opacity / transform。
+   ========================================================================== */
+
+.tc {
+  padding: 24px 0 24px;
+}
+
+.tc__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 16px;
+}
+
+.tc__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.tc__sub {
+  margin: 6px 0 0;
+  max-width: 60ch;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+/* -------------------------------- 查询条 -------------------------------- */
+
+.tc__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+.tc__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+
+.tc__input {
+  flex: 1 1 220px;
+  min-inline-size: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: #fff;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  transition: border-color 0.16s var(--ease), box-shadow 0.16s var(--ease);
+}
+
+.tc__input:focus-visible {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.16);
+}
+
+.tc__btn {
+  appearance: none;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  background: var(--blue);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.16s var(--ease), opacity 0.16s var(--ease);
+}
+
+.tc__btn:hover:not(:disabled) {
+  background: var(--blue-ink);
+}
+
+.tc__btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.tc__recent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0;
+}
+
+.tc__recentlabel {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.tc__chip {
+  appearance: none;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: border-color 0.16s var(--ease), color 0.16s var(--ease);
+}
+
+.tc__chip:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.tc__chip.is-on {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: rgba(0, 113, 227, 0.06);
+}
+
+.tc__error {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(180, 35, 24, 0.25);
+  border-radius: var(--r-md);
+  background: rgba(180, 35, 24, 0.05);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--red);
+}
+
+.tc__empty {
+  margin: 20px 0 0;
+  padding: 28px 20px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-lg);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--ink-3);
+}
+
+/* -------------------------------- 概览条 -------------------------------- */
+
+.tc__summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  margin: 18px 0 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--line);
+  overflow: hidden;
+}
+
+.tc__cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--surface);
+}
+
+.tc__cell--widen {
+  grid-column: span 1;
+}
+
+.tc__k {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.tc__v {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.tc__v--mono {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.tc__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ------------------------------- 时间线 ------------------------------- */
+
+.tc__timeline {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+}
+
+.tc__event {
+  position: relative;
+  display: grid;
+  grid-template-columns: 88px 62px minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px 0 10px 14px;
+  border-left: 1px solid var(--line-strong);
+}
+
+.tc__event::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: 17px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.tc__event:first-child::before {
+  background: var(--blue);
+}
+
+.tc__time {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+
+.tc__tag {
+  align-self: start;
+  justify-self: start;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.tc__tag--executed {
+  border-color: rgba(0, 113, 227, 0.3);
+  color: var(--blue);
+  background: rgba(0, 113, 227, 0.07);
+}
+
+.tc__tag--approved {
+  border-color: rgba(0, 128, 96, 0.3);
+  color: var(--green);
+  background: rgba(0, 128, 96, 0.07);
+}
+
+.tc__tag--rejected {
+  border-color: rgba(180, 35, 24, 0.28);
+  color: var(--red);
+  background: rgba(180, 35, 24, 0.06);
+}
+
+.tc__tag--rolled_back {
+  border-color: rgba(176, 116, 0, 0.3);
+  color: var(--amber);
+  background: rgba(176, 116, 0, 0.07);
+}
+
+.tc__body {
+  min-inline-size: 0;
+}
+
+.tc__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.tc__sku {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.tc__actor {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.tc__detail {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+
+/* -------------------------------- 动作表 -------------------------------- */
+
+.tc__h3 {
+  margin: 28px 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.tc__tablewrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+.tc__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tc__table th,
+.tc__table td {
+  padding: 9px 12px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+}
+
+.tc__table th {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--surface-2);
+}
+
+.tc__table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tc__table td {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+
+/* 状态胶囊：与执行台用同一套语义色 */
+.tc__status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  font-size: 11px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.tc__status--drafted {
+  border-color: rgba(176, 116, 0, 0.3);
+  color: var(--amber);
+}
+
+.tc__status--approved {
+  border-color: rgba(0, 113, 227, 0.3);
+  color: var(--blue);
+}
+
+.tc__status--executed {
+  border-color: rgba(0, 128, 96, 0.3);
+  color: var(--green);
+}
+
+.tc__status--rejected {
+  border-color: rgba(180, 35, 24, 0.28);
+  color: var(--red);
+}
+
+.tc__status--rolled_back {
+  border-color: rgba(90, 90, 96, 0.35);
+  color: var(--ink-2);
+}
+
+/* ------------------------------- 原始数据 ------------------------------- */
+
+.tc__raw {
+  margin: 22px 0 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+
+.tc__raw > summary {
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.tc__raw > pre {
+  margin: 0;
+  padding: 0 14px 14px;
+  max-height: 420px;
+  overflow: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+/* ------------------------------- 小屏 ------------------------------- */
+
+@media (max-width: 640px) {
+  .tc__head {
+    flex-direction: column;
+  }
+
+  .tc__event {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .tc__time {
+    padding-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc__input,
+  .tc__btn,
+  .tc__chip {
+    transition: none;
+  }
+}

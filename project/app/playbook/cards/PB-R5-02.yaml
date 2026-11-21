@@ -1,0 +1,24 @@
+card_id: PB-R5-02
+title: 换人群包并重测素材
+root_causes: [R5]
+metrics: [ctr, cpc, roi]
+risk: 1
+scope: [channel]
+action_type: swap_creative
+preconditions:
+  - 主力人群包 CTR 连续 3 天下降，累计跌幅超过 20%
+  - 同一人群包周触达频次超过 4 次，点击成本上涨 15% 以上
+  - 在投素材使用超过 21 天，期间没做过 AB 测试
+steps:
+  - 新建 3 个相似人群包：店铺访客 30 天、竞品兴趣人群、类目高消费人群，每个日预算 200 元
+  - 每个新人群包配 2 套新素材，保留 CTR 最高的一套，24h 内淘汰 CTR 低于 1.5% 的组合
+  - 原主力人群包预算下调 50%，保留观察，避免与新包抢量
+  - 每天对比新老包的 CTR、CPC、ROI，7 天后只保留 ROI 高于 3 的 1 到 2 个包
+expected_effect:
+  metric: ctr
+  direction: up
+  range: [0.15, 0.4]
+  window_days: 10
+success_metric: roi
+source: 行业实践（人群包衰减与素材疲劳）
+version: 1

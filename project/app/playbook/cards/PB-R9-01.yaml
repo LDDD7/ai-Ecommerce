@@ -1,0 +1,24 @@
+card_id: PB-R9-01
+title: 回调成交价至主流价格带
+root_causes: [R9]
+metrics: [cvr, unit_price, gmv, aov]
+risk: 2
+scope: [sku, style]
+action_type: adjust_price
+preconditions:
+  - 成交价高于同款竞品均价 15% 以上，且 CVR 低于同类目均值 20%
+  - 近 7 天有稳定曝光、加购率正常，但下单转化率低于店铺均值 30%
+  - 该 SKU 成交价落在类目主流价格带（如 99~129 元）之外，且高价带销量占比不足 10%
+steps:
+  - 先把价格降到主流价格带上沿（例 129 元），单次降幅不超过 8%，保留原价划线价
+  - 改价后 48h 只看 CVR 与加购转化，不动投放；CVR 未回升 5% 以上再降 3%
+  - 同步核算券后价，确保券后价不低于价格带下沿，避免击穿毛利底线
+  - 连续 3 天 CVR 回到同类均值后停止降价，改用赠品或组合装守住价格
+expected_effect:
+  metric: cvr
+  direction: up
+  range: [0.08, 0.18]
+  window_days: 14
+success_metric: cvr
+source: 平台价格力规则 + 类目价格带分析
+version: 1

@@ -1,0 +1,23 @@
+# 店诊 Agent · 本地/单机编排
+# 用法：cd project && docker compose up --build
+# 数据：挂载 ./data（82MB 库 + 300 张素材）；空目录会由 entrypoint 生成。
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: storedoctor-api:0.1.0
+    container_name: storedoctor-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DB_PATH: /app/data/store.db
+      # 容器里没有本地模型，先关掉向量召回与 cross 重排（自动降级到 FTS + 规则分）
+      EMBED_MODE: "off"
+      RERANK_MODE: "rule"
+      SEED_ON_START: "1"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

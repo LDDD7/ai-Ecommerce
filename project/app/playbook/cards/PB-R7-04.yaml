@@ -1,0 +1,24 @@
+card_id: PB-R7-04
+title: 大促后断货款先补货再返场
+root_causes: [R7, R3]
+metrics: [stockout_rate, gmv, uv, cvr, paid_orders]
+risk: 1
+scope: [sku, store]
+action_type: restock_alert
+preconditions:
+  - 大促结束后 3 天内 GMV 环比下滑超过 40%，同时热销 SKU 断货率超过 10%
+  - 断货 SKU 占大促 GMV 的 20% 以上，且补货周期长于 7 天
+  - 大促已透支部分需求，此时直接返场放量会把 ROI 打到 1.5 以下
+steps:
+  - 第一阶段只做补货：按大促日均销量的 1.5 倍下补货单，优先给 TOP5 断货 SKU 锁库存
+  - 补货在途期间不投返场广告，用预售和到货提醒承接搜索流量，避免空烧预算
+  - 可售库存覆盖 7 天销量后开返场：先老客召回，48h 后再放新客，顺序不可颠倒
+  - 返场预算按大促日预算的 40% 起投，ROI 低于 1.8 就减半，连续 2 天低于 1.5 停投
+expected_effect:
+  metric: stockout_rate
+  direction: down
+  range: [0.30, 0.55]
+  window_days: 21
+success_metric: gmv
+source: 大促复盘方法论 + 补货周期数据
+version: 1

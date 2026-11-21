@@ -1,0 +1,24 @@
+card_id: PB-R6-01
+title: 24小时差评响应与售后补偿
+root_causes: [R6]
+metrics: [neg_review_rate, dsr, return_rate]
+risk: 1
+scope: [sku, store]
+action_type: issue_coupon
+preconditions:
+  - 近 7 天差评率超过 3%，或较前 7 天翻倍
+  - 超过 5 条一星或二星评价在 24h 内未回复
+  - 店铺 DSR 描述相符低于 4.6
+steps:
+  - 24h 内逐条回复近 7 天全部一星与二星评价，先致歉再给方案，不复制模板
+  - 对能联系上的买家发 10 元无门槛券或补发配件，争取 72h 内改评
+  - 按质量、尺码、物流三类登记差评原因，转交对应负责人
+  - 48h 后复盘响应率、改评率与 DSR 变化，响应率不足 50% 就加派一名客服
+expected_effect:
+  metric: neg_review_rate
+  direction: down
+  range: [0.2, 0.4]
+  window_days: 14
+success_metric: dsr
+source: 平台规则（评价管理）+ 行业实践
+version: 1

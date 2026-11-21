@@ -1,0 +1,42 @@
+# 参考文档（只在本机看，不进仓库）
+reference/
+
+# Python 产物
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# 数据与产物（演示库与图片在本地生成，不进仓库）
+**/data/*.db
+**/data/*.db-*
+**/data/images/
+**/data/creative/
+**/data/store_tiny.db
+.npm-cache/
+**/web/node_modules/
+**/web/dist/
+eval/reports/
+
+# 密钥
+.env
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# 临时产物（本机 %TEMP% ACL 异常，测试与脚本产物一律放工作区）
+.tmp/
+.compat_run/
+data_probe/
+a_test.db
+*.log
+
+# pytest / 并行 subagent 留下的空目录（工作区根有 DeleteSubdirectoriesAndFiles 拒绝项，删不掉就忽略）
+pytest-cache-files-*/
+project/tmp*/
+torchinductor_*/

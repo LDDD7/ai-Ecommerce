@@ -1,0 +1,24 @@
+card_id: PB-R8-01
+title: 搜索加预算抢竞品流失曝光
+root_causes: [R8]
+metrics: [impressions, clicks, ctr, uv, ad_spend, roi]
+risk: 1
+scope: [channel, store]
+action_type: adjust_bid
+preconditions:
+  - 近 7 天曝光环比下滑超过 25%，且自然搜索 UV 连续 5 天下滑
+  - 竞品近 14 天上新 3 款以上，同价格带出现低价同款
+  - 现有搜索计划 ROI 仍高于 2.5，日预算消耗率低于 85%（还有加投空间）
+steps:
+  - 搜索计划日预算提高 20%，只加搜索不碰推荐，观察 48 小时 CPC 与 ROI
+  - 竞品词单独建计划，出价比行业均价高 10%，单计划日预算封顶 300 元
+  - 48 小时后 ROI 低于 2.0 的单元降价 15%，ROI 高于 3.0 的单元再加 10% 预算
+  - 加投期间每天看库存，主推款可售天数低于 20 天时暂停加投
+expected_effect:
+  metric: impressions
+  direction: up
+  range: [0.15, 0.32]
+  window_days: 7
+success_metric: roi
+source: 搜索投放 SOP + 竞品监测周报
+version: 1

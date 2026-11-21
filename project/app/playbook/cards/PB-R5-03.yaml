@@ -1,0 +1,24 @@
+card_id: PB-R5-03
+title: 否词收敛与关键词出价调整
+root_causes: [R5]
+metrics: [cpc, roi, ad_spend]
+risk: 1
+scope: [channel]
+action_type: adjust_bid
+preconditions:
+  - 近 7 天搜索词报表中无转化词消耗占比超过 20%
+  - 广泛匹配计划 CPC 高于账户均值 30% 以上
+  - 高转化词（ROI 高于 4）因出价过低排名掉出前 3
+steps:
+  - 导出近 7 天搜索词报表，消耗超过 50 元且 0 转化的词全部加否词，重复词根做短语否定
+  - ROI 高于 4 的词提价 10%，单独建精准计划，日预算 300 元起
+  - 广泛匹配计划统一改为精准或短语匹配，出价下调 10%
+  - 48h 后复查，CPC 未降 10% 就继续压缩低效词出价，ROI 回到 4 以上再加预算
+expected_effect:
+  metric: cpc
+  direction: down
+  range: [0.1, 0.3]
+  window_days: 7
+success_metric: roi
+source: 行业实践（搜索词否词与出价优化）
+version: 1

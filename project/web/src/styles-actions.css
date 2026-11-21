@@ -1,0 +1,1042 @@
+/* ==========================================================================
+   店诊 StoreDoctor —— 执行台（Approval 列表 + ActionDetail 抽屉）
+   令牌、圆角、阴影、缓动全部沿用 styles.css；只新增 .ax-* / .axd__* 两族类。
+   不重定义 .chip / .btn / .note / .tabs。
+   动效只碰 opacity / transform；小字用 --ink-2 及以上保证 ≥4.5:1。
+   ========================================================================== */
+
+/* ------------------------------- 列表页 ------------------------------- */
+
+/* 外层 section 只承接上下留白：横向留白由 App 的 .sheet 负责，避免双重缩进 */
+.ax-approval {
+  padding: 24px 0 8px;
+}
+
+.ax-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  margin: 0 0 16px;
+}
+
+/* 胶囊组：底槽取近白，保证未选中项的文字对比度仍 ≥4.5:1 */
+.ax-pills {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  max-width: 100%;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+}
+
+.ax-pill {
+  display: inline-flex;
+  align-items: center;
+  appearance: none;
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease);
+}
+
+.ax-pill:hover {
+  color: var(--ink);
+}
+
+.ax-pill:active {
+  transform: scale(0.98);
+}
+
+/* 选中态实际是 `ax-pill on` 两个类；放在 hover 之后，避免悬停把蓝色盖掉 */
+.ax-pill.on {
+  border-color: rgba(0, 113, 227, 0.18);
+  background: rgba(0, 113, 227, 0.1);
+  color: var(--blue-ink);
+  font-weight: 600;
+}
+
+.ax-pill__n {
+  margin-left: 6px;
+  color: var(--ink-2);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.ax-pill.on .ax-pill__n {
+  color: var(--blue-ink);
+}
+
+/* 下拉：40px 高，箭头用内联 SVG，不额外加元素 */
+.ax-select {
+  flex: 0 0 auto;
+  height: 40px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 34px 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background-color: var(--surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 10px 6px;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+  appearance: none;
+}
+
+.ax-meta {
+  margin-left: auto;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ------------------------------- 动作行 ------------------------------- */
+
+.ax-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 三列：风险 chip / 标题正文 / 右侧时间与警告 */
+.ax-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  /* 左侧多留 3px 给状态竖条 */
+  padding: 14px 16px 14px 19px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  transition: transform var(--t) var(--ease), opacity var(--t-fast) var(--ease);
+}
+
+/* 状态竖条：颜色由各修饰类的 --ax-tone 决定 */
+.ax-row::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--ax-tone, transparent);
+}
+
+.ax-row--drafted {
+  --ax-tone: var(--amber);
+}
+
+.ax-row--approved {
+  --ax-tone: var(--blue);
+}
+
+.ax-row--executed {
+  --ax-tone: var(--green);
+}
+
+.ax-row--rejected {
+  --ax-tone: var(--ink-3);
+}
+
+.ax-row--rolled_back {
+  --ax-tone: #c7c7cc;
+}
+
+.ax-row:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-2);
+  transform: translateY(-1px);
+}
+
+.ax-row:active {
+  transform: translateY(0);
+}
+
+.ax-row__main {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* 行内标题没有单独类，直接落在 <strong> 上 */
+.ax-row__main strong {
+  display: block;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.ax-row__sub {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.55;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
+}
+
+/* 右侧竖排：时间在上、警告数量在下 */
+.ax-row__end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* 说明里写的是 --ink-3，但 12.5px 的 #86868b 在白底只有 3.6:1；
+   按无障碍硬约束（小字 ≥4.5:1）改用 --ink-2，仍保持次要层级。 */
+.ax-row__time {
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.ax-warn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--amber);
+  font-size: 12.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* 骨架屏：只动 opacity，避免布局抖动 */
+.ax-skeleton {
+  height: 64px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: linear-gradient(
+    100deg,
+    rgba(0, 0, 0, 0.045) 0%,
+    rgba(0, 0, 0, 0.075) 45%,
+    rgba(0, 0, 0, 0.045) 100%
+  );
+  pointer-events: none;
+  animation: ax-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes ax-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.ax-empty {
+  margin: 0;
+  padding: 46px 24px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-lg);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: 13.5px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.ax-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(215, 0, 21, 0.16);
+  border-radius: var(--r-md);
+  background: rgba(215, 0, 21, 0.05);
+  color: var(--red);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ax-error__msg {
+  flex: 1 1 220px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ax-retry {
+  flex: 0 0 auto;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: opacity var(--t-fast) var(--ease);
+}
+
+.ax-retry:hover {
+  opacity: 0.7;
+}
+
+/* -------------------------------- 抽屉 -------------------------------- */
+
+.axd {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  /* 内容右对齐：单列网格 + 列尾对齐 */
+  justify-items: end;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+/* 材质模糊只在支持的浏览器里开，避免不支持的浏览器出现半透明糊字 */
+@supports (backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px)) {
+  .axd {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+}
+
+/* 抽屉打开时锁住背景滚动（:has 不支持时自然退化） */
+@supports selector(:has(*)) {
+  body:has(.axd) {
+    overflow: hidden;
+  }
+}
+
+/* 横向内边距放在面板上，头部/底部操作条用负外边距铺满，DOM 里没有 body 包裹层也不跑版 */
+.axd__panel {
+  display: flex;
+  flex-direction: column;
+  width: min(560px, 92vw);
+  max-width: 100%;
+  height: 100%;
+  padding: 0 22px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--surface);
+  box-shadow: -18px 0 48px rgba(0, 0, 0, 0.16);
+  animation: ax-slide var(--t) var(--ease) both;
+}
+
+.axd__panel:focus {
+  outline: none;
+}
+
+@keyframes ax-slide {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.axd__head {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 -22px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.axd__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+/* Ghost 关闭键：文字按钮，胶囊形，hover 才轻微加深 */
+.axd__close {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  margin: 0;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.axd__close:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink);
+}
+
+.axd__close:active {
+  transform: scale(0.96);
+}
+
+/* 可选的正文包裹层；当前 ActionDetail 直接把内容放在面板里，也兼容包一层 */
+.axd__body {
+  flex: 1 0 auto;
+  padding: 4px 0 8px;
+}
+
+/* 重置浏览器默认段距；.axd__note 的 class 优先级更高，仍有上间距 */
+.axd__panel p {
+  margin: 0;
+}
+
+.axd__panel .axd__note {
+  margin: 10px 0 0;
+}
+
+.axd__section {
+  margin: 0;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.axd__body > .axd__section:first-child,
+/* 当前 ActionDetail 没有 axd__body 包裹层，直接挂在面板下，这里补一条 */
+.axd__panel > .axd__section:first-of-type {
+  border-top: 0;
+}
+
+.axd__section > h2,
+.axd__section > h3 {
+  margin: 0 0 10px;
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* 顶部关键信息网格：第一块内容与头部留出间距 */
+.axd__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px 16px;
+  margin: 0;
+  padding: 0;
+}
+
+.axd__panel > .axd__grid {
+  padding: 14px 0 2px;
+}
+
+/* label 在上、值在下；同时兼容 span 与 dl/dt/dd 两种写法 */
+.axd__kv {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.axd__kv dt {
+  color: var(--ink-2);
+  font-size: 12px;
+}
+
+.axd__kv dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.axd__kv > span:last-child,
+.axd__kv > strong:last-child,
+.axd__kv > b:last-child {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* trace 编号 + 跳转入口：编号等宽，按钮是次要操作，不抢主按钮的视觉重量 */
+.axd__trace {
+  display: block;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+
+.axd__traceopen {
+  appearance: none;
+  margin: 4px 0 0;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--blue);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.axd__traceopen:hover {
+  color: var(--blue-ink);
+}
+
+.axd__traceopen:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 变更对比：旧值划掉 → 新值蓝色强调 */
+.axd__diff {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+}
+
+.axd__diffbefore {
+  color: var(--ink-2);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.axd__diffarrow {
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1;
+  user-select: none;
+}
+
+.axd__diffafter {
+  color: var(--blue-ink);
+  font-weight: 600;
+}
+
+/* 时间线：左侧圆点 + 细线；事件/操作人/时间同一行，detail 折行显示 */
+.axd__timeline {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.axd__timeline li {
+  position: relative;
+  padding: 0 0 16px 22px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.axd__timeline li:last-child {
+  padding-bottom: 0;
+}
+
+.axd__timeline li::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
+}
+
+.axd__timeline li::after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  bottom: 0;
+  left: 3px;
+  width: 1px;
+  background: var(--line-strong);
+}
+
+.axd__timeline li:last-child::after {
+  display: none;
+}
+
+.axd__timeline li > strong {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.axd__timeline li > span:first-of-type {
+  margin-left: 6px;
+  color: var(--ink-2);
+  font-size: 12.5px;
+}
+
+.axd__timeline time {
+  margin-left: 8px;
+  color: var(--ink-2);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.axd__auditbody {
+  margin-top: 6px;
+  display: grid;
+  gap: 6px;
+}
+
+.axd__auditsummary {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.axd__auditparts {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+
+.axd__auditpart {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-inline-size: 0;
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+
+.axd__auditpart dt {
+  font-size: 11px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.axd__auditpart dd {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* 说明块：普通灰底，--bad 转成危险红 */
+.axd__note {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+.axd__panel > .axd__note {
+  margin-top: 14px;
+}
+
+.axd__note--bad {
+  border-color: rgba(215, 0, 21, 0.18);
+  background: rgba(215, 0, 21, 0.06);
+  color: var(--red);
+}
+
+/* 警告是 ul，保留列表语义，圆点跟随琥珀色 */
+.axd__warn {
+  margin: 10px 0 0;
+  padding: 10px 12px 10px 26px;
+  border: 1px solid rgba(154, 91, 0, 0.18);
+  border-radius: 10px;
+  background: rgba(154, 91, 0, 0.08);
+  color: var(--amber);
+  font-size: 12.5px;
+  line-height: 1.6;
+  list-style: disc outside;
+}
+
+.axd__warn li {
+  margin: 0;
+  padding-left: 2px;
+}
+
+.axd__warn li + li {
+  margin-top: 4px;
+}
+
+.axd__warn li::marker {
+  color: var(--amber);
+}
+
+/* 底部操作条：sticky 在面板底部；短内容时由 margin-top:auto 推到底 */
+.axd__actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: auto -22px 0;
+  padding: 14px 22px calc(14px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.axd__field {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 14px;
+  min-width: 0;
+}
+
+.axd__field > label {
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* 操作条里的字段横向铺开，按钮留在行尾 */
+.axd__actions .axd__field {
+  flex: 1 1 140px;
+  margin: 0;
+}
+
+.axd__actions > .axd__note {
+  flex: 1 1 100%;
+  margin: 0;
+}
+
+/* 当前组件给 input / select 没加 axd__input 类，这里一并覆盖；类本身保留给后续使用 */
+.axd__input,
+.axd__field input,
+.axd__field select,
+.axd__field textarea {
+  width: 100%;
+  min-height: 38px;
+  margin: 0;
+  padding: 8px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.axd__input:hover,
+.axd__field input:hover,
+.axd__field select:hover,
+.axd__field textarea:hover {
+  border-color: var(--ink-3);
+}
+
+.axd__input::placeholder,
+.axd__field input::placeholder,
+.axd__field textarea::placeholder {
+  color: var(--ink-2);
+  opacity: 1;
+}
+
+textarea.axd__input,
+.axd__field textarea {
+  min-height: 88px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* 按钮：默认白底描边，--primary 蓝底，--danger 红字，--ghost 灰底 */
+.axd__btn {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease);
+}
+
+.axd__btn:hover {
+  opacity: 0.88;
+}
+
+.axd__btn:active {
+  transform: scale(0.98);
+}
+
+.axd__btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.axd__btn:disabled:active {
+  transform: none;
+}
+
+.axd__btn--primary {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+}
+
+.axd__btn--danger {
+  border-color: rgba(215, 0, 21, 0.35);
+  background: var(--surface);
+  color: var(--red);
+}
+
+.axd__btn--danger:hover {
+  background: rgba(215, 0, 21, 0.06);
+}
+
+.axd__btn--ghost {
+  border-color: var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.axd__tag {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ------------------------------- 焦点环 ------------------------------- */
+
+.ax-pill:focus-visible,
+.ax-row:focus-visible,
+.ax-select:focus-visible,
+.ax-retry:focus-visible,
+.axd__close:focus-visible,
+.axd__btn:focus-visible,
+.axd__input:focus-visible,
+.axd__field input:focus-visible,
+.axd__field select:focus-visible,
+.axd__field textarea:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* 覆盖 styles.css 全局 :focus-visible 的 6px 圆角，保住各控件本来的形状 */
+.ax-pill:focus-visible,
+.axd__close:focus-visible,
+.axd__btn:focus-visible {
+  border-radius: var(--r-pill);
+}
+
+.ax-row:focus-visible {
+  border-radius: var(--r-md);
+}
+
+.ax-select:focus-visible,
+.axd__input:focus-visible,
+.axd__field input:focus-visible,
+.axd__field select:focus-visible,
+.axd__field textarea:focus-visible {
+  border-color: var(--blue);
+  border-radius: 10px;
+}
+
+/* ------------------------------- 响应式 ------------------------------- */
+
+@media (max-width: 720px) {
+  .ax-approval {
+    padding-top: 16px;
+  }
+
+  .ax-bar {
+    gap: 8px;
+  }
+
+  /* 「共 N 条」独占一行，避免把工具条挤爆 */
+  .ax-meta {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  /* 两行布局：chip + 标题在第一行，右侧信息落到第二行 */
+  .ax-row {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 6px 10px;
+    padding: 13px 14px 13px 17px;
+  }
+
+  .ax-row__end {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding-top: 2px;
+  }
+
+  .axd__panel {
+    width: 100vw;
+    max-width: 100vw;
+    padding: 0 16px;
+    box-shadow: none;
+  }
+
+  .axd__head {
+    flex-wrap: wrap;
+    margin: 0 -16px;
+    padding: 14px 16px;
+  }
+
+  /* 窄屏让标题独占一行，chip / 状态 / 关闭键落在第二行 */
+  .axd__title {
+    flex: 1 1 100%;
+  }
+
+  .axd__actions {
+    margin: auto -16px 0;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .axd__actions .axd__btn {
+    flex: 1 1 auto;
+  }
+
+  .axd__grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+  }
+}
+
+/* ------------------------------- 减弱动效 ------------------------------- */
+
+/* 逐条关掉本文件的动画；不用全局 animation-duration:0.01ms 的写法 */
+@media (prefers-reduced-motion: reduce) {
+  .ax-row,
+  .ax-pill,
+  .ax-retry,
+  .axd__close,
+  .axd__btn {
+    transition: none;
+  }
+
+  .ax-row:hover,
+  .ax-row:active,
+  .ax-pill:active,
+  .axd__close:active,
+  .axd__btn:active {
+    transform: none;
+  }
+
+  .ax-skeleton {
+    animation: none;
+    opacity: 0.7;
+  }
+
+  .axd__panel {
+    animation: none;
+  }
+}

@@ -1,0 +1,768 @@
+/* ==========================================================================
+   查数视图 —— 指标目录、QuerySpec 构建、自然语言解析、结果表格
+   所有类名统一 qy- 前缀；颜色/圆角/阴影全部复用 styles.css 的令牌。
+   ========================================================================== */
+
+/* ---------------------------------- 页面 ---------------------------------- */
+
+.qy-page {
+  display: block;
+}
+
+.qy-head {
+  margin: 4px 0 20px;
+}
+
+.qy-head__title {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 32px);
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.qy-head__lead {
+  margin: 8px 0 0;
+  max-width: 62ch;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+
+/* ---------------------------------- 卡片 ---------------------------------- */
+
+.qy-card {
+  margin-bottom: 18px;
+  padding: 24px 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.qy-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 4px;
+}
+
+.qy-card__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.qy-state {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+
+.qy-meta {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.qy-error {
+  margin: 0;
+  color: var(--red);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.qy-errorbox {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  padding: 12px 0 4px;
+}
+
+/* --------------------------------- 自然语言 -------------------------------- */
+
+.qy-nl {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+}
+
+.qy-nl__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qy-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  font-size: 14.5px;
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+
+.qy-input::placeholder {
+  color: var(--ink-3);
+}
+
+.qy-input:hover {
+  border-color: var(--line-strong);
+}
+
+.qy-input:focus {
+  border-color: rgba(0, 113, 227, 0.55);
+  background: var(--surface);
+}
+
+.qy-nl__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.qy-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: var(--r-pill);
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.qy-badge--llm {
+  background: rgba(0, 113, 227, 0.1);
+  color: var(--blue-ink);
+}
+
+.qy-badge--rule {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--ink-2);
+}
+
+/* 解析警告是「提示」不是「错误」：柔和琥珀，不用报错红。 */
+.qy-warnings {
+  margin: 0;
+  padding: 10px 14px 10px 30px;
+  border-radius: var(--r-md);
+  background: rgba(154, 91, 0, 0.07);
+  color: var(--amber);
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+.qy-warnings li + li {
+  margin-top: 4px;
+}
+
+/* --------------------------------- 构建区 --------------------------------- */
+
+.qy-builder {
+  padding-bottom: 20px;
+}
+
+.qy-field {
+  display: grid;
+  gap: 10px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.qy-field__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.qy-field__label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.qy-field__count {
+  color: var(--ink-3);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.qy-field__note {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.qy-group {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+}
+
+.qy-group__label {
+  margin: 0;
+  padding-top: 7px;
+  color: var(--ink-3);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.qy-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 32px 胶囊 chip；选中蓝底白字，禁用降透明度。 */
+.qy-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.qy-chip:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  color: var(--ink);
+  background: var(--surface-2);
+}
+
+.qy-chip:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.qy-chip--on {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+}
+
+.qy-chip--on:hover:not(:disabled) {
+  border-color: var(--blue-ink);
+  background: var(--blue-ink);
+  color: #fff;
+}
+
+.qy-chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.qy-builder__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 28px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.qy-builder__row > .qy-field {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* 时间 */
+
+.qy-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.qy-preset {
+  min-height: 32px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.qy-preset:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.qy-preset:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.qy-preset--on {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.qy-preset--on:hover:not(:disabled) {
+  border-color: #000;
+  background: #000;
+  color: var(--surface);
+}
+
+.qy-time__range {
+  margin: 0;
+  color: var(--ink-2);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.qy-limit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 2px;
+  color: var(--ink-2);
+  font-size: 12.5px;
+}
+
+.qy-limit input {
+  width: 96px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.qy-limit input:hover {
+  border-color: var(--line-strong);
+}
+
+/* 底部按钮 */
+
+.qy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.qy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.qy-btn:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  background: var(--surface-2);
+}
+
+.qy-btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.qy-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.qy-btn--primary {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+}
+
+.qy-btn--primary:hover:not(:disabled) {
+  border-color: var(--blue-ink);
+  background: var(--blue-ink);
+  color: #fff;
+}
+
+.qy-btn--small {
+  min-height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+/* ---------------------------------- 结果 ---------------------------------- */
+
+.qy-status {
+  color: var(--blue-ink);
+  font-size: 12.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.qy-result {
+  padding-top: 22px;
+}
+
+.qy-resultmeta {
+  margin: 0 0 12px;
+  color: var(--ink-3);
+  font-size: 12.5px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.qy-empty {
+  margin: 0;
+  padding: 30px 16px;
+  color: var(--ink-3);
+  font-size: 13.5px;
+  text-align: center;
+}
+
+.qy-skeleton {
+  display: grid;
+  gap: 10px;
+  padding: 10px 0 6px;
+}
+
+.qy-skeleton__row {
+  height: 16px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.055), rgba(0, 0, 0, 0.025), rgba(0, 0, 0, 0.055));
+}
+
+.qy-skeleton__row:nth-child(2) {
+  width: 86%;
+}
+
+.qy-skeleton__row:nth-child(3) {
+  width: 68%;
+}
+
+/* 表格：420px 内滚动，表头吸顶。 */
+.qy-tablewrap {
+  max-height: 420px;
+  overflow-x: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.qy-tablewrap:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.qy-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.qy-table .qy-th,
+.qy-table .qy-td {
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.qy-table .qy-th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface);
+  color: var(--ink-3);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: inset 0 -1px var(--line);
+}
+
+.qy-table tbody td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.qy-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.qy-table tbody tr:hover {
+  background: rgba(0, 113, 227, 0.045);
+}
+
+.qy-table .qy-th--num,
+.qy-table .qy-td--num {
+  text-align: right;
+}
+
+.qy-table .qy-td--mono {
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+
+/* QuerySpec JSON */
+
+.qy-json {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.qy-json summary {
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.qy-json summary:hover {
+  color: var(--ink);
+}
+
+.qy-json pre {
+  margin: 10px 0 0;
+  max-height: 320px;
+  padding: 14px 16px;
+  overflow: auto;
+  border-radius: var(--r-md);
+  background: #1d1d1f;
+  color: #f5f5f7;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* --------------------------------- 无障碍 --------------------------------- */
+
+.qy-page :focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* 减弱动效：只压掉位移与过渡，保留颜色/背景这类非位移动画。 */
+@media (prefers-reduced-motion: reduce) {
+  .qy-chip,
+  .qy-preset,
+  .qy-btn,
+  .qy-input,
+  .qy-table tbody tr {
+    transition: none;
+  }
+
+  .qy-chip:active:not(:disabled),
+  .qy-preset:active:not(:disabled),
+  .qy-btn:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* --------------------------------- 响应式 --------------------------------- */
+
+@media (max-width: 720px) {
+  .qy-card {
+    padding: 18px;
+  }
+
+  .qy-nl {
+    padding: 14px;
+  }
+
+  .qy-nl__row {
+    flex-wrap: wrap;
+  }
+
+  .qy-nl__row .qy-btn {
+    width: 100%;
+  }
+
+  .qy-builder__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .qy-builder__row > .qy-field + .qy-field {
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .qy-group {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .qy-group__label {
+    padding-top: 0;
+  }
+
+  .qy-table {
+    font-size: 12px;
+  }
+}
+
+/* ------------------------------ 过滤条件 ------------------------------- */
+
+.qy-filters {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.qy-filter {
+  display: grid;
+  grid-template-columns: minmax(118px, 0.9fr) minmax(92px, 0.65fr) minmax(0, 2fr) 32px;
+  align-items: center;
+  gap: 8px;
+}
+
+.qy-filter__cell {
+  display: block;
+  min-inline-size: 0;
+}
+
+.qy-filter__select,
+.qy-filter__input {
+  inline-size: 100%;
+  min-block-size: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+
+.qy-filter__select {
+  padding-inline-end: 24px;
+}
+
+.qy-filter__input::placeholder {
+  color: var(--ink-3);
+}
+
+.qy-filter__select:focus-visible,
+.qy-filter__input:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.qy-filter--bad .qy-filter__select,
+.qy-filter--bad .qy-filter__input {
+  border-color: var(--red);
+}
+
+.qy-filter__remove {
+  inline-size: 32px;
+  block-size: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--t) var(--ease), background var(--t) var(--ease), border-color var(--t) var(--ease);
+}
+
+.qy-filter__remove:hover {
+  color: var(--red);
+  border-color: var(--line);
+  background: var(--bg);
+}
+
+.qy-filter__error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--red);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.qy-filter__empty {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.qy-filters__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.qy-filter__hint {
+  color: var(--red);
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .qy-filter {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .qy-filter__cell--value {
+    grid-column: 1 / -1;
+  }
+
+  .qy-filter__remove {
+    grid-column: 2;
+    justify-self: end;
+  }
+}
+
+.qy-btn--ghost {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--ink-2);
+}
+
+.qy-btn--ghost:hover:not(:disabled) {
+  color: var(--ink);
+  border-color: var(--line-strong);
+  background: var(--bg);
+}
+
+.qy-filter__cell--op {
+  min-inline-size: 0;
+}

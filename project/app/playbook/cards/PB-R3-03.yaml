@@ -1,0 +1,25 @@
+card_id: PB-R3-03
+title: 断货款停投，预算转替代款
+root_causes: [R3]
+metrics: [ad_spend, roi, cpc, stockout_rate]
+risk: 1
+scope: [sku, channel]
+action_type: adjust_bid
+preconditions:
+  - 断货或可售不足 2 天的 SKU 仍在跑付费推广，日消耗 300 元以上
+  - 该 SKU 近 7 天 ROI 环比下滑超过 30%，点击进来无货可买
+  - 店内有库存充足、ROI 稳定的替代款可以承接预算
+steps:
+  - 当天暂停断货款全部付费计划（直通车、万相台、人群放大），只保留自然流量
+  - 释放预算的 70% 加到 3 个替代款计划，按近 14 天 ROI 从高到低分配，单计划日预算上限加 50%
+  - 替代款出价先维持原价，观察 24 小时 ROI，低于 2.0 就回调 10% 出价，不一次性大幅加价
+  - 给断货款计划设库存恢复自动开启规则，可售 7 天以上时恢复原预算的 80%
+  - 7 天后复盘：断货款无效花费是否清零，替代款 GMV 是否补回断货损失的 60% 以上
+expected_effect:
+  metric: roi
+  direction: up
+  range: [0.15, 0.4]
+  window_days: 7
+success_metric: roi
+source: 行业实践（断货止损与预算再分配）
+version: 1

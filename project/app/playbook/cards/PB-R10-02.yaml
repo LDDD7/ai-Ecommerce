@@ -1,0 +1,24 @@
+card_id: PB-R10-02
+title: 切换承运商并下调时效承诺
+root_causes: [R10]
+metrics: [neg_review_rate, refund_rate, dsr, cvr]
+risk: 1
+scope: [sku, store]
+action_type: swap_creative
+preconditions:
+  - 某承运商近 30 天准时签收率低于 85%，物流类差评占该承运商订单的 3% 以上
+  - 详情页承诺「48h 发货」，实际平均发货时长超过 60h
+  - 换承运商后单票成本上涨不超过 1.5 元，仍在毛利可承受范围
+steps:
+  - 先把详情页与主图的时效承诺从「48h 发货」改为「72h 发货」，避免二次违约
+  - 按省份切分：江浙沪皖切次日达承运商，其余省份保留原承运商并加 1 元保价
+  - 新承运商先切 30% 订单灰度 7 天，准时签收率低于 90% 立即回滚
+  - 灰度达标后全量切换，同步替换发货时效素材与客服自动回复话术
+expected_effect:
+  metric: neg_review_rate
+  direction: down
+  range: [0.15, 0.30]
+  window_days: 30
+success_metric: dsr
+source: 承运商时效数据 + 平台发货规则
+version: 1
